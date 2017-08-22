@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!--element margin-->
+    <dimen name="head_image_horizontal_margin">5dp</dimen>
+    <dimen name="head_image_vertical_margin">5dp</dimen>
+
+    //
+    <dimen name="element_horizontal_margin">5dp</dimen>
+    <dimen name="element_vertical_margin">5dp</dimen>
+
+
+
+    <!--list card view style -->
+    <dimen name="main_linr_height">402dp</dimen>
+    <dimen name="main_card_view_height">400dp</dimen>
+    <dimen name="main_card_bottom_height">50dp</dimen>
+    <dimen name="main_card_head_height">50dp</dimen>
+
+    <dimen name="main_card_image_size">250dp</dimen>
+    <dimen name="main_card_ele_size">2dp</dimen>
+    <dimen name="main_card_ele_radius">2dp</dimen>
+    <!--text sizes for min list card-->
+
+    <dimen name="main_card_bottom_text_size">10sp</dimen>
+    <dimen name="main_card_head_text_size">10sp</dimen>
+
+
+</resources>
