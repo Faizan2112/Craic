@@ -15,6 +15,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -41,6 +42,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Random;
 
 import static com.dreamworld.craic.R.id.recyclerView;
@@ -50,11 +52,12 @@ import static com.dreamworld.craic.configuration.Config.viewtype;
 
 //import static com.dreamworld.craic.networkcheck.NetworkUtill.getConnectivityStatusString;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
     BroadcastReceiver mBroadcastReceiver;
     private RecyclerView mRecyclerView;
+    private static  boolean isNetConnected = false;
     private Config mConfigFile;
-    TextToSpeech listenText;
+    TextToSpeech mListenText;
 
     private RecyclerView.Adapter mRecyclerViewAdapter;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -78,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this));
         verifyStoragePermissions(this);
+        mListenText = new TextToSpeech(this, this);
 
 
     }
@@ -134,8 +138,10 @@ public class MainActivity extends AppCompatActivity {
     private void checkStatus() {
         int conn = NetworkUtill.getConnectivityStatus(this);
         if (conn == NetworkUtill.TYPE_WIFI || conn == NetworkUtill.TYPE_MOBILE) {
+            if(isNetConnected){
+            isNetConnected = true;
             useVolley();
-
+            }
         } else {
             Intent downloadIntent = new Intent(MainActivity.this, DisplayDownloadActivity.class);
             startActivity(downloadIntent);
@@ -155,6 +161,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if(isNetConnected)
+        {
+            isNetConnected = true ;
+
+        }
+
     }
 
     @Override
@@ -240,8 +252,8 @@ public class MainActivity extends AppCompatActivity {
 
                             String imageUrl = itemPostion.getUrl();
                             Intent sendImage = new Intent(MainActivity.this, DetailContentActivity.class);
-                          //  sendImage.putExtra(imageUrl, "detailImageUrl");
-                           sendImage.putExtra("detailImageUrl",imageUrl);
+                            //  sendImage.putExtra(imageUrl, "detailImageUrl");
+                            sendImage.putExtra("detailImageUrl", imageUrl);
                             startActivity(sendImage);
                             Toast.makeText(getApplicationContext(), "" + getItemPosition + "" + getName + "" + getModelType, Toast.LENGTH_LONG).show();
 
@@ -249,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
 
                     }
 
-                   break;
+                    break;
                     case R.id.home_main_gif_image:
                         if (getModelType == Model.IMAGE_TYPE) {
                             Toast.makeText(MainActivity.this, itemPostion.getUrl(), Toast.LENGTH_LONG).show();
@@ -263,6 +275,21 @@ public class MainActivity extends AppCompatActivity {
                             new DownloadTask(MainActivity.this, direct, "downloading").execute(itemPostion.getUrl());
 
                         }
+                        break;
+
+                    case R.id.home_listen_text:
+
+                        speakOut(getName);
+
+                        break;
+
+                    case R.id.home_share_text:
+                        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                        sharingIntent.setType("text/plain");
+                        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
+                        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, getName);
+     //                   startActivity(Intent.createChooser(sharingIntent, getResources().getString(R.string.share_using)));
+                         startActivity(Intent.createChooser(sharingIntent,"Share to"));
                         break;
 
                 }
@@ -331,6 +358,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void speakOut(String text) {
+      //  String text = getText.getText().toString();
+
+        mListenText.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+
+    }
+
     private int getViewType(JSONObject fetchedData) {
         int viewtype = 0;
         try {
@@ -359,5 +393,24 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return url;
+    }
+
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
+
+            int result = mListenText.setLanguage(Locale.US);
+
+            if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "This Language is not supported");
+            } else {
+                //getTextVoice.setEnabled(true);
+               // speakOut(S);
+            }
+
+        } else {
+            Log.e("TTS", "Initilization Failed!");
+        }
     }
 }

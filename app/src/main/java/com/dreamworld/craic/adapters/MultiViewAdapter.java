@@ -221,7 +221,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     View.OnClickListener textTypeListener = new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            onItemClickListener.onItemClick(object);
+                            onHomeImageViewClick.onItemClick(v,object);
                         }
                     };
 
@@ -260,7 +260,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     View.OnClickListener gifTypeListener = new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            onItemClickListener.onItemClick(object);
+                            onHomeImageViewClick.onItemClick(v,object);
                         }
                     };
                     ((GifTypeViewHolder) holder).mDownloadGif.setOnClickListener(gifTypeListener);
