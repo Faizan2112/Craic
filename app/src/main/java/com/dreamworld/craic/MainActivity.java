@@ -24,6 +24,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.dreamworld.craic.activity.DetailContentActivity;
 import com.dreamworld.craic.activity.DisplayDownloadActivity;
 import com.dreamworld.craic.adapters.MultiViewAdapter;
 import com.dreamworld.craic.broadcastreciever.NetworkChangeRecierver;
@@ -42,7 +43,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 
-import static android.R.attr.id;
 import static com.dreamworld.craic.R.id.recyclerView;
 import static com.dreamworld.craic.configuration.Config.names;
 import static com.dreamworld.craic.configuration.Config.urls;
@@ -238,31 +238,33 @@ public class MainActivity extends AppCompatActivity {
 
                         if (getModelType == Model.IMAGE_TYPE) {
 
+                            String imageUrl = itemPostion.getUrl();
+                            Intent sendImage = new Intent(MainActivity.this, DetailContentActivity.class);
+                          //  sendImage.putExtra(imageUrl, "detailImageUrl");
+                           sendImage.putExtra("detailImageUrl",imageUrl);
+                            startActivity(sendImage);
+                            Toast.makeText(getApplicationContext(), "" + getItemPosition + "" + getName + "" + getModelType, Toast.LENGTH_LONG).show();
 
                         }
 
                     }
 
+                   break;
+                    case R.id.home_main_gif_image:
+                        if (getModelType == Model.IMAGE_TYPE) {
+                            Toast.makeText(MainActivity.this, itemPostion.getUrl(), Toast.LENGTH_LONG).show();
+                            String name_ = "gifs" + randomNo + ".gif";
+                            File direct = new File(Environment.getExternalStorageDirectory() + "/Download/craic", name_);
 
-                case R.id.home_main_gif_image:
-                if (getModelType == Model.IMAGE_TYPE) {
-                    Toast.makeText(MainActivity.this, itemPostion.getUrl(), Toast.LENGTH_LONG).show();
-                    String name_ = "gifs" + randomNo + ".gif";
-                    File direct = new File(Environment.getExternalStorageDirectory() + "/Download/craic", name_);
+                            if (!direct.exists()) {
+                                File wallpaperDirectory = new File("/sdcard/Download/craic/", name_);
+                                wallpaperDirectory.getParentFile().mkdirs();
+                            }
+                            new DownloadTask(MainActivity.this, direct, "downloading").execute(itemPostion.getUrl());
 
-                    if (!direct.exists()) {
-                        File wallpaperDirectory = new File("/sdcard/Download/craic/", name_);
-                        wallpaperDirectory.getParentFile().mkdirs();
-                    }
-                    new DownloadTask(MainActivity.this, direct, "downloading").execute(itemPostion.getUrl());
+                        }
+                        break;
 
-                }
-                break;
-
-            }
-                if (adapterIds == R.id.home_main_image) {
-
-                    Toast.makeText(getApplicationContext(), id + "" + getItemPosition + "" + getName + "" + getModelType, Toast.LENGTH_LONG).show();
                 }
 
 
