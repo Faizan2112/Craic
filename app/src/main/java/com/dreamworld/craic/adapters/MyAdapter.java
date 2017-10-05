@@ -19,6 +19,7 @@ import com.dreamworld.craic.interfaces.OnItemClickListener;
 import com.dreamworld.craic.model.CreateList;
 
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -46,31 +47,35 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(MyAdapter.ViewHolder viewHolder, int i) {
 
-     // viewHolder.title.setText(galleryList.get(i).getImage_title());
-      //  viewHolder.img.setScaleType(ImageView.ScaleType.CENTER_CROP);
-     //   viewHolder.img.setImageResource((galleryList.get(i).getImage_ID()));
-   //    Uri imageUri = Uri .fromFile(galleryList.get(i).getImage_ID());
-        String mImageUrlString = "https://static.pexels.com/photos/17679/pexels-photo.jpg";
-       
-        Glide.with(context).
-                load(mImageUrlString)
-                .listener(new RequestListener<String, GlideDrawable>() {
-                    @Override
-                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                        progressBar.setVisibility(View.GONE);
-                        return false;
-                    }
+       // File url = galleryList.get(i).getImage_ID();
+        //final Uri imageUri = Uri.fromFile(url);
+        //Glide.with(context).load(imageUri).into(viewHolder.img);
 
-                    @Override
-                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                        progressBar.setVisibility(View.GONE);
-                        return false;
-                    }
-                })
-                .crossFade(1000)
-                .error(R.drawable.share)
-                .into(viewHolder.img);
- 
+//     // viewHolder.title.setText(galleryList.get(i).getImage_title());
+//      //  viewHolder.img.setScaleType(ImageView.ScaleType.CENTER_CROP);
+//     //   viewHolder.img.setImageResource((galleryList.get(i).getImage_ID()));
+//   //    Uri imageUri = Uri .fromFile(galleryList.get(i).getImage_ID());
+//        String mImageUrlString = "https://static.pexels.com/photos/17679/pexels-photo.jpg";
+//
+//        Glide.with(context).
+//                load(mImageUrlString)
+//                .listener(new RequestListener<String, GlideDrawable>() {
+//                    @Override
+//                    public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+//                        progressBar.setVisibility(View.GONE);
+//                        return false;
+//                    }
+//
+//                    @Override
+//                    public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+//                        progressBar.setVisibility(View.GONE);
+//                        return false;
+//                    }
+//                })
+//                .crossFade(1000)
+//                .error(R.drawable.share)
+//                .into(viewHolder.img);
+//
       /*  Glide.with(context)
                 // .load(Uri.parse("/storage/emulated/0/Download/followme/foldername77.png"))
                 // .load("http://www.planwallpaper.com/wallpaper-hd#static/images/b807c2282ab0a491bd5c5c1051c6d312_rP0kQjJ.jpg")
@@ -82,8 +87,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                 .error(R.drawable.share)
                 .into(viewHolder.img);
 */
-       // Glide.with(context).load(Uri.parse(galleryList.get(i).getImage_ID())).placeholder(R.drawable.placeholder).centerCrop().into(viewHolder.img);
-      //  Glide.with(context).load(Uri.parse("/storage/emulated/0/Download/followme/foldername77.png")).placeholder(R.drawable.placeholder).centerCrop().into(viewHolder.img);
+      Glide.with(context).load(Uri.parse(galleryList.get(i).getImage_ID())).placeholder(R.drawable.placeholder).centerCrop().into(viewHolder.img);
+      //  Glide.with(context).load(new File(galleryList.get(i).getImage_ID()).getAbsoluteFile()).placeholder(R.drawable.placeholder).centerCrop().into(viewHolder.img);
+
+        //  Glide.with(context).load(Uri.parse("/storage/emulated/0/Download/followme/foldername77.png")).placeholder(R.drawable.placeholder).centerCrop().into(viewHolder.img);
 
         /* viewHolder.img.setOnClickListener(new OnClickListener() {
             @Override

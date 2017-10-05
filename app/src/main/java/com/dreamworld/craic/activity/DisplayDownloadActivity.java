@@ -161,7 +161,7 @@ public class DisplayDownloadActivity extends AppCompatActivity {
       for (int i = 0; i < files.length; i++) {
           CreateList createList = new CreateList();
           //    createList.setImage_title(image_titles[i]);
-          createList.setImage_ID(files[i].getName());
+          createList.setImage_ID("file:///storage/emulated/0/Download/craic/"+files[i].getName());
           theimage.add(createList);
       }
 

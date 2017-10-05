@@ -234,7 +234,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     //          ((ImageTypeViewHolder) holder).txtType.setText(object.getUrl());
                     //     ((ImageTypeViewHolder) holder).image.setImageResource(object.data);
                     ((ImageTypeViewHolder) holder).mMainImage.setImageResource(object.data);
-                    Glide.with(mContext).load(dataSet.get(listPosition).getUrl()).centerCrop().placeholder(R.drawable.placeholder).into(((ImageTypeViewHolder) holder).mMainImage);
+                    Glide.with(mContext).load(dataSet.get(listPosition).getUrl()).fitCenter().placeholder(R.drawable.placeholder).into(((ImageTypeViewHolder) holder).mMainImage);
                     ((ImageTypeViewHolder) holder).mHeadImage.setImageResource(object.data);
                     Glide.with(mContext).load(dataSet.get(listPosition).getUrl()).transform(new CircleTransform(mContext)).into(((ImageTypeViewHolder) holder).mHeadImage);
 

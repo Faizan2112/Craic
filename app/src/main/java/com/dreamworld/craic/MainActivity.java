@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private static  boolean isNetConnected = false;
     private Config mConfigFile;
     TextToSpeech mListenText;
+    SwipeRefreshLayout mSwipeRefreshLayout ;
 
     private RecyclerView.Adapter mRecyclerViewAdapter;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -77,6 +79,13 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, OrientationHelper.VERTICAL, false);
 
         mRecyclerView = (RecyclerView) findViewById(recyclerView);
+        mSwipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.main_swipe_refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                useVolley();
+            }
+        });
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this));
@@ -107,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             public void onResponse(String response) {
 
                 parseJson(response);
-                Toast.makeText(getApplicationContext(), "" + response, Toast.LENGTH_LONG).show();
+              //  Toast.makeText(getApplicationContext(), "" + response, Toast.LENGTH_LONG).show();
 
             }
         }, new Response.ErrorListener() {
@@ -119,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         });
         RequestQueue lRequestQueue = Volley.newRequestQueue(this);
         lRequestQueue.add(sr);
+        mSwipeRefreshLayout.setRefreshing(false);
 
 
     }
@@ -138,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private void checkStatus() {
         int conn = NetworkUtill.getConnectivityStatus(this);
         if (conn == NetworkUtill.TYPE_WIFI || conn == NetworkUtill.TYPE_MOBILE) {
-            if(isNetConnected){
+            if(!isNetConnected){
             isNetConnected = true;
             useVolley();
             }
@@ -178,12 +188,15 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     @Override
     protected void onStop() {
         super.onStop();
+        isNetConnected = true;
     }
 
     @Override
     protected void onDestroy() {
         //  unregisterReceiver(mBroadcastReceiver);
         super.onDestroy();
+        isNetConnected = false ;
+
     }
 
     private void parseJson(String response) {
@@ -193,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
             mConfigFile = new Config(array.length());
 
-            for (int i = 0; i <= array.length(); i++) {
+            for (int i = 0; i < array.length(); i++) {
                 JSONObject fetchedData = array.getJSONObject(i);
                 viewtype[i] = getViewType(fetchedData);
                 names[i] = getName(fetchedData);
