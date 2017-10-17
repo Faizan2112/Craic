@@ -41,7 +41,7 @@ public class DetailContentActivity extends AppCompatActivity {
         Intent getExtraIntent = getIntent();
         String imageUrl = getExtraIntent.getStringExtra("detailImageUrl");
 //         Glide.with(this).load(imageUrl).centerCrop().placeholder(R.drawable.placeholder).into(mDisplayFullImage);
-        Glide.with(this).load(imageUrl).fitCenter().placeholder(R.drawable.placeholder).into(mDisplayFullImage);
+        Glide.with(this).load(imageUrl).dontAnimate().fitCenter().placeholder(R.drawable.placeholder).into(mDisplayFullImage);
 
         // Toast.makeText(getApplicationContext(), "" + imageUrl, Toast.LENGTH_LONG).show();
 

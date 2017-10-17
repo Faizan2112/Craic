@@ -85,6 +85,7 @@
                             android:layout_height="match_parent"
                             android:background="@drawable/bottombutton"
                             android:padding="@dimen/main_card_ele_size"
+
                             android:weightSum="1">
                             <!-- <ImageView
                                  android:layout_width="0dp"
@@ -100,7 +101,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
                                 android:layout_weight=".33"
-                                android:background="@drawable/like"
+                                android:background="@drawable/listen46"
                                 android:gravity="center"
 
                                 />
@@ -111,7 +112,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight=".33"
 
-                                android:background="@drawable/share"
+                                android:background="@drawable/share46"
 
 
                                 />
@@ -122,7 +123,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_weight=".33"
 
-                                android:background="@drawable/share"
+                                android:background="@drawable/down46"
 
 
                                 />

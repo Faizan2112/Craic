@@ -10,6 +10,7 @@ public class CreateList {
     private String image_title;
     private String image_id;
 
+
     public File getFile_id() {
         return file_id;
     }

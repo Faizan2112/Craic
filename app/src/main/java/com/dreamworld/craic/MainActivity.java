@@ -9,6 +9,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +19,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -53,15 +56,16 @@ import static com.dreamworld.craic.configuration.Config.viewtype;
 
 //import static com.dreamworld.craic.networkcheck.NetworkUtill.getConnectivityStatusString;
 
-public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
+public class MainActivity extends Activity implements TextToSpeech.OnInitListener {
     BroadcastReceiver mBroadcastReceiver;
     private RecyclerView mRecyclerView;
-    private static  boolean isNetConnected = false;
+    public static  boolean isNetConnected = false;
     private Config mConfigFile;
     TextToSpeech mListenText;
     SwipeRefreshLayout mSwipeRefreshLayout ;
 
     private RecyclerView.Adapter mRecyclerViewAdapter;
+    BottomNavigationView bottomNavigationView ;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -80,15 +84,36 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
         mRecyclerView = (RecyclerView) findViewById(recyclerView);
         mSwipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.main_swipe_refresh);
+        bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_navigation);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 useVolley();
             }
         });
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.feed_btm_my_interest:
+                     Toast.makeText(getApplicationContext(),"feed_btm_my_interest",Toast.LENGTH_LONG).show();
+                        break;
+                    case R.id.feed_btm_share:
+
+                        Toast.makeText(getApplicationContext(),"feed_btm_my_share",Toast.LENGTH_LONG).show();
+                     break;
+                    case R.id.feed_btm_whats_new:
+
+                        Toast.makeText(getApplicationContext(),"feed_btm_my_new",Toast.LENGTH_LONG).show();
+                     break;
+                }
+                return false;
+            }
+        });
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this));
+
         verifyStoragePermissions(this);
         mListenText = new TextToSpeech(this, this);
 
