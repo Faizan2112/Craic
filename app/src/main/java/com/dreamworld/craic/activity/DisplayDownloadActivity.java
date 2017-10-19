@@ -25,6 +25,7 @@ import com.dreamworld.craic.MainActivity;
 import com.dreamworld.craic.R;
 import com.dreamworld.craic.adapters.MyAdapter;
 import com.dreamworld.craic.broadcastreciever.NetworkChangeRecierver;
+import com.dreamworld.craic.interfaces.OnDownloadActivity;
 import com.dreamworld.craic.model.CreateList;
 import com.dreamworld.craic.networkcheck.NetworkUtill;
 
@@ -33,10 +34,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.dreamworld.craic.MainActivity.isNetConnected;
+import static com.dreamworld.craic.adapters.MyAdapter.multiSelect;
 import static com.dreamworld.craic.networkcheck.NetworkUtill.TYPE_NOT_CONNECTED;
 import static com.dreamworld.craic.networkcheck.NetworkUtill.getConnectivityStatusString;
 
-public class DisplayDownloadActivity extends AppCompatActivity {
+public class DisplayDownloadActivity extends AppCompatActivity implements OnDownloadActivity {
 
  //   ImageAdapter myImageAdapter;
     private GridLayoutManager mGridLayoutManager1, mGridLayoutManager2, mGridLayoutManager3;
@@ -68,6 +70,7 @@ public class DisplayDownloadActivity extends AppCompatActivity {
         ArrayList<CreateList> createLists = prepareData();
         adapter = new MyAdapter(getApplicationContext(), createLists);
         recyclerView.setAdapter(adapter);
+        adapter.setOnDownloadActivity(this);
        /* GridView gridview = (GridView) findViewById(R.id.gridview);
         myImageAdapter = new ImageAdapter(this);
         gridview.setAdapter(myImageAdapter);
@@ -330,4 +333,18 @@ public class DisplayDownloadActivity extends AppCompatActivity {
 
   }
 
-}
+    @Override
+    public void onItemClick(View fullScreenImage, CreateList itemPostion) {
+        int id = fullScreenImage.getId();
+   if(!multiSelect){
+        if(id == R.id.img) {
+            String getItemPosition = itemPostion.getImage_ID();
+            Intent displayLarge = new Intent(getApplicationContext(),DetailContentActivity.class);
+            displayLarge.putExtra("fileImage",getItemPosition);
+            displayLarge.putExtra("callFromDownload", 2);
+            startActivity(displayLarge);
+            //finish();
+             Toast.makeText(getApplicationContext(), "" + getItemPosition, Toast.LENGTH_LONG).show();
+        }
+    }
+}}

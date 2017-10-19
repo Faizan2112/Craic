@@ -6,6 +6,8 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.speech.tts.TextToSpeech;
@@ -13,14 +15,17 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -29,8 +34,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.dreamworld.craic.activity.DetailContentActivity;
 import com.dreamworld.craic.activity.DisplayDownloadActivity;
+import com.dreamworld.craic.activity.SuggestionActivity;
+import com.dreamworld.craic.activity.UploadActivity;
 import com.dreamworld.craic.adapters.MultiViewAdapter;
 import com.dreamworld.craic.broadcastreciever.NetworkChangeRecierver;
 import com.dreamworld.craic.classess.DividerItemDecoration;
@@ -45,9 +53,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 
 import static com.dreamworld.craic.R.id.recyclerView;
 import static com.dreamworld.craic.configuration.Config.names;
@@ -56,7 +66,7 @@ import static com.dreamworld.craic.configuration.Config.viewtype;
 
 //import static com.dreamworld.craic.networkcheck.NetworkUtill.getConnectivityStatusString;
 
-public class MainActivity extends Activity implements TextToSpeech.OnInitListener {
+public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
     BroadcastReceiver mBroadcastReceiver;
     private RecyclerView mRecyclerView;
     public static  boolean isNetConnected = false;
@@ -85,26 +95,50 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         mRecyclerView = (RecyclerView) findViewById(recyclerView);
         mSwipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.main_swipe_refresh);
         bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_navigation);
+        Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(tb);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        //toolbar.setNavigationIcon(R.drawable.ic_toolbar);
+        tb.setTitle("");
+
+        // Get the ActionBar here to configure the way it behaves.
+//        final ActionBar ab = getSupportActionBar();
+//        //ab.setHomeAsUpIndicator(R.drawable.ic_menu); // set a custom icon for the default home button
+//        ab.setDisplayShowHomeEnabled(true); // show or hide the default home button
+//        ab.setDisplayHomeAsUpEnabled(true);
+//        ab.setDisplayShowCustomEnabled(true); // enable overriding the default toolbar layout
+//        ab.setDisplayShowTitleEnabled(false); // disable the default title element here (for centered title)
+//
+
+
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 useVolley();
             }
         });
+
+
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.feed_btm_my_interest:
-                     Toast.makeText(getApplicationContext(),"feed_btm_my_interest",Toast.LENGTH_LONG).show();
+                    case R.id.main_menu_dowload:
+                        Intent i = new Intent(getApplicationContext(),DisplayDownloadActivity.class);
+                        startActivity(i);
+                     Toast.makeText(getApplicationContext(),"downlod",Toast.LENGTH_LONG).show();
                         break;
-                    case R.id.feed_btm_share:
+                    case R.id.main_menu_suggestion:
+                        Intent is = new Intent(getApplicationContext(),SuggestionActivity.class);
+                        startActivity(is);
 
                         Toast.makeText(getApplicationContext(),"feed_btm_my_share",Toast.LENGTH_LONG).show();
                      break;
-                    case R.id.feed_btm_whats_new:
+                    case R.id.main_menu_upload:
+                        Intent in = new Intent(getApplicationContext(),UploadActivity.class);
+                        startActivity(in);
 
-                        Toast.makeText(getApplicationContext(),"feed_btm_my_new",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(),"UploadActivity",Toast.LENGTH_LONG).show();
                      break;
                 }
                 return false;
@@ -257,7 +291,7 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
 
 
             @Override
-            public void onItemClick(View fullScreenImage, Model itemPostion) {
+            public void onItemClick(RecyclerView.ViewHolder ho ,View fullScreenImage, Model itemPostion)  {
 
                 final int randomNo = new Random().nextInt(61) + 20;
                 //  int listenerType = itemPostion.getType();
@@ -289,9 +323,11 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
                         if (getModelType == Model.IMAGE_TYPE) {
 
                             String imageUrl = itemPostion.getUrl();
+                            String value = "1";
                             Intent sendImage = new Intent(MainActivity.this, DetailContentActivity.class);
                             //  sendImage.putExtra(imageUrl, "detailImageUrl");
                             sendImage.putExtra("detailImageUrl", imageUrl);
+                            sendImage.putExtra("callFromMain", value);
                             startActivity(sendImage);
                             Toast.makeText(getApplicationContext(), "" + getItemPosition + "" + getName + "" + getModelType, Toast.LENGTH_LONG).show();
 
@@ -299,7 +335,33 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
 
                     }
 
-                    break;
+                    case R.id.home_image_share :
+                        String text = "Look at my awesome picture";
+                    ImageView   content = (ImageView) ho.itemView.findViewById(R.id.home_main_image);
+                        content.setDrawingCacheEnabled(true);
+                        Bitmap bitmap = Bitmap.createBitmap(content.getDrawingCache());
+                        File cachePath = new File("/storage/emulated/0/Download/Craic/image.jpg");
+                        try {
+                            cachePath.createNewFile();
+                            FileOutputStream ostream = new FileOutputStream(cachePath);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
+                            ostream.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+
+
+                        Intent share = new Intent(Intent.ACTION_SEND);
+                        Uri phototUri = Uri.parse("/storage/emulated/0/Download/Craic/image.jpg");
+                        share.setData(phototUri);
+                        share.setType("image/*");
+                        share.putExtra(Intent.EXTRA_TEXT, text);
+                        share.putExtra(Intent.EXTRA_STREAM, phototUri);
+                        share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        fullScreenImage.getContext().startActivity(Intent.createChooser(share,"Share via"));
+
+                        break;
                     case R.id.home_main_gif_image:
                         if (getModelType == Model.IMAGE_TYPE) {
                             Toast.makeText(MainActivity.this, itemPostion.getUrl(), Toast.LENGTH_LONG).show();

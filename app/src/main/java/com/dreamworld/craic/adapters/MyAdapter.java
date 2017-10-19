@@ -1,6 +1,7 @@
 package com.dreamworld.craic.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
@@ -20,7 +21,10 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.dreamworld.craic.R;
+import com.dreamworld.craic.interfaces.OnDownloadActivity;
+import com.dreamworld.craic.interfaces.OnHomeImageViewClick;
 import com.dreamworld.craic.model.CreateList;
+import com.dreamworld.craic.model.Model;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,9 +37,17 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private ProgressBar progressBar = null;
     private ArrayList<CreateList> galleryList;
     private Context context;
-    private boolean multiSelect = false;
+    public static boolean multiSelect = false;
     private ArrayList<Integer> selectedItems = new ArrayList<Integer>();
+    private OnDownloadActivity onDownloadActivity;
 
+    public OnDownloadActivity getOnDownloadActivity() {
+        return onDownloadActivity;
+    }
+
+    public void setOnDownloadActivity(OnDownloadActivity onDownloadActivity) {
+        this.onDownloadActivity = onDownloadActivity;
+    }
 
     public MyAdapter(Context context, ArrayList<CreateList> galleryList) {
         this.galleryList = galleryList;
@@ -51,8 +63,20 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(MyAdapter.ViewHolder viewHolder, int i) {
+        final CreateList object = galleryList.get(i);
         Glide.with(context).load(Uri.parse(galleryList.get(i).getImage_ID())).placeholder(R.drawable.placeholder).dontAnimate().fitCenter().into(viewHolder.img);
         viewHolder.update(i);
+
+        View.OnClickListener imageGridTypeListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //    onItemClickListener.onItemClick(object);
+
+                onDownloadActivity.onItemClick(v,object);
+            }
+        };
+
+        viewHolder.img.setOnClickListener(imageGridTypeListener);
     }
 
 
@@ -66,6 +90,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         private TextView title;
         private ImageView img;
         LinearLayout linearLayout;
+
 
         public ViewHolder(View view) {
             super(view);
@@ -84,7 +109,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                     linearLayout.setBackgroundColor(Color.WHITE);
                 } else {
                     selectedItems.add(item);
-                    linearLayout.setBackgroundColor(Color.LTGRAY);
+                    linearLayout.setBackgroundColor(Color.CYAN);
                 }
             }
         }
@@ -146,7 +171,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
                  Toast.makeText(context, "" + galleryList.get(intItem).getImage_ID(), Toast.LENGTH_SHORT).show();
               //  galleryList.remove(galleryList.get(intItem).getImage_ID());
             String s =galleryList.get(intItem).getImage_ID();
-                DeleteFile(s);
+                shareFiles(s);
+                //DeleteFile(s);
             }
             notifyDataSetChanged();
             mode.finish();
@@ -160,6 +186,25 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
             notifyDataSetChanged();
         }
     };
+
+    private void shareFiles(String s) {
+    ArrayList<Uri> uriImage = new ArrayList<Uri>();
+        Uri parseUri=null;
+       for(int i = 0 ; i<=s.length();i++ )
+       {
+          parseUri =Uri.parse(s);
+           uriImage.add(parseUri);
+       }
+     //   Uri phototUri = Uri.parse(s);
+        Intent share = new Intent(Intent.ACTION_SEND_MULTIPLE);
+
+        //share.setData(phototUri);
+        share.setType("*/*");
+         share.putParcelableArrayListExtra(Intent.EXTRA_STREAM,uriImage);
+        share.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+         this.context.startActivity(Intent.createChooser(share,"Share via"));
+    }
+
     public void DeleteFile(String fileName) {
         File appvc = new File(Environment.getExternalStorageDirectory()
                 .getAbsolutePath(), fileName);

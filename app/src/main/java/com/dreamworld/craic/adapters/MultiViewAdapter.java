@@ -21,6 +21,7 @@ import com.dreamworld.craic.transformshape.CircleTransform;
 import com.dreamworld.craic.interfaces.OnHomeImageViewClick;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by faizan on 31/07/2017.
@@ -71,6 +72,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         TextView txtType;
         ImageView mMainImage, mHeadImage;
         ImageView mDownloadButton;
+        ImageView mShareImage , mLikeImage ;
 
         public ImageTypeViewHolder(View itemView) {
             super(itemView);
@@ -79,7 +81,8 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             this.mMainImage = (ImageView) itemView.findViewById(R.id.home_main_image);
             this.mHeadImage = (ImageView) itemView.findViewById(R.id.home_head_image);
             this.mDownloadButton = (ImageView) itemView.findViewById(R.id.home_main_downloadImage);
-
+            this.mShareImage = (ImageView) itemView.findViewById(R.id.home_image_share);
+            this.mLikeImage = (ImageView) itemView.findViewById(R.id.home_image_like);
             //mDownloadButton.setOnClickListener(this);
         }
 
@@ -221,7 +224,13 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     View.OnClickListener textTypeListener = new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            onHomeImageViewClick.onItemClick(v,object);
+                            try {
+                                onHomeImageViewClick.onItemClick(holder,v,object);
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     };
 
@@ -245,12 +254,21 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         public void onClick(View v) {
                         //    onItemClickListener.onItemClick(object);
 
-                            onHomeImageViewClick.onItemClick(v,object);
+                            try {
+                                onHomeImageViewClick.onItemClick(holder,v,object);
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     };
                     ((ImageTypeViewHolder) holder).mDownloadButton.setOnClickListener(imageTypeListener);
 
                     ((ImageTypeViewHolder) holder).mMainImage.setOnClickListener(imageTypeListener);
+                   ((ImageTypeViewHolder) holder).mShareImage.setOnClickListener(imageTypeListener);
+                    ((ImageTypeViewHolder) holder).mLikeImage.setOnClickListener(imageTypeListener);
+
                     break;
                 case Model.AUDIO_TYPE:
                     ((GifTypeViewHolder) holder).mGifImage.setImageResource(object.data);
@@ -260,7 +278,13 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     View.OnClickListener gifTypeListener = new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            onHomeImageViewClick.onItemClick(v,object);
+                            try {
+                                onHomeImageViewClick.onItemClick(holder,v,object);
+                            } catch (ExecutionException e) {
+                                e.printStackTrace();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     };
                     ((GifTypeViewHolder) holder).mDownloadGif.setOnClickListener(gifTypeListener);

@@ -4,20 +4,20 @@
 
     <item
         android:title="Upload"
-        android:id="@+id/feed_btm_my_interest"
+        android:id="@+id/main_menu_upload"
         android:enabled="true"
         android:icon="@drawable/upload56"
         app:showAsAction="ifRoom" />
     <item
         android:title="Suggestion"
-        android:id="@+id/feed_btm_whats_new"
+        android:id="@+id/main_menu_suggestion"
         android:enabled="true"
         android:icon="@drawable/sugg24"
         app:showAsAction="ifRoom" />
     <item
         android:title="Download"
         android:icon="@drawable/downlod24"
-        android:id="@+id/feed_btm_share"
+        android:id="@+id/main_menu_dowload"
         android:enabled="true"
         app:showAsAction="ifRoom" />
 
