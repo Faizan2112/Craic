@@ -6,4 +6,8 @@
     <color name="colorLightBack">#f7f6f6</color>
     <color name="fontPrimary">#fff</color>
     <color name="white">#fff</color>
+    <color name="colorPrimary1">#032E37</color>
+    <color name="colorPrimary2">#063A48</color>
+    <color name="colorPrimary3">#29404A</color>
+
 </resources>

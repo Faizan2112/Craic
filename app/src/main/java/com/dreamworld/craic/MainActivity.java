@@ -3,8 +3,10 @@ package com.dreamworld.craic;
 import android.Manifest;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -25,9 +27,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -54,33 +59,48 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
+import java.util.Set;
 
+
+import static android.content.SharedPreferences.*;
 import static com.dreamworld.craic.R.id.recyclerView;
+import static com.dreamworld.craic.configuration.Config.SHARED_PREF_NAME;
+import static com.dreamworld.craic.configuration.Config.UPDATELIKE_URL;
+import static com.dreamworld.craic.configuration.Config.UPDATEUNLIKE_URL;
+import static com.dreamworld.craic.configuration.Config.currentImage;
 import static com.dreamworld.craic.configuration.Config.names;
 import static com.dreamworld.craic.configuration.Config.urls;
 import static com.dreamworld.craic.configuration.Config.viewtype;
 
-//import static com.dreamworld.craic.networkcheck.NetworkUtill.getConnectivityStatusString;
 
 public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
     BroadcastReceiver mBroadcastReceiver;
     private RecyclerView mRecyclerView;
-    public static  boolean isNetConnected = false;
+    public static boolean isNetConnected = false;
     private Config mConfigFile;
     TextToSpeech mListenText;
-    SwipeRefreshLayout mSwipeRefreshLayout ;
+    SwipeRefreshLayout mSwipeRefreshLayout;
 
     private RecyclerView.Adapter mRecyclerViewAdapter;
-    BottomNavigationView bottomNavigationView ;
+    BottomNavigationView bottomNavigationView;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+     public static Set<String> saveLikeid;
+    public static Set<String> deleteLikeid ;
+   public static ArrayList<String> imagePos= new ArrayList<>();
+    private static SharedPreferences addImageId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,8 +113,8 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, OrientationHelper.VERTICAL, false);
 
         mRecyclerView = (RecyclerView) findViewById(recyclerView);
-        mSwipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.main_swipe_refresh);
-        bottomNavigationView = (BottomNavigationView)findViewById(R.id.bottom_navigation);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.main_swipe_refresh);
+        bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(tb);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -124,22 +144,22 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.main_menu_dowload:
-                        Intent i = new Intent(getApplicationContext(),DisplayDownloadActivity.class);
+                        Intent i = new Intent(getApplicationContext(), DisplayDownloadActivity.class);
                         startActivity(i);
-                     Toast.makeText(getApplicationContext(),"downlod",Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "downlod", Toast.LENGTH_LONG).show();
                         break;
                     case R.id.main_menu_suggestion:
-                        Intent is = new Intent(getApplicationContext(),SuggestionActivity.class);
+                        Intent is = new Intent(getApplicationContext(), SuggestionActivity.class);
                         startActivity(is);
 
-                        Toast.makeText(getApplicationContext(),"feed_btm_my_share",Toast.LENGTH_LONG).show();
-                     break;
+                        Toast.makeText(getApplicationContext(), "feed_btm_my_share", Toast.LENGTH_LONG).show();
+                        break;
                     case R.id.main_menu_upload:
-                        Intent in = new Intent(getApplicationContext(),UploadActivity.class);
+                        Intent in = new Intent(getApplicationContext(), UploadActivity.class);
                         startActivity(in);
 
-                        Toast.makeText(getApplicationContext(),"UploadActivity",Toast.LENGTH_LONG).show();
-                     break;
+                        Toast.makeText(getApplicationContext(), "UploadActivity", Toast.LENGTH_LONG).show();
+                        break;
                 }
                 return false;
             }
@@ -147,9 +167,30 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this));
-
+        retriveSharedKey();
         verifyStoragePermissions(this);
         mListenText = new TextToSpeech(this, this);
+
+
+    }
+
+    private void retriveSharedKey() {
+
+    if(null == saveLikeid)
+    {
+        saveLikeid = new HashSet<>();
+    }
+
+     addImageId = getSharedPreferences(SHARED_PREF_NAME,Context.MODE_PRIVATE);
+
+        saveLikeid = addImageId.getStringSet("ImageIds",saveLikeid);
+
+      //  Iterator<String> it ;
+        for (String s : saveLikeid) {
+            //Toast.makeText(getApplicationContext(),""+s.toString(),Toast.LENGTH_LONG);
+        }
+
+
 
 
     }
@@ -175,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             public void onResponse(String response) {
 
                 parseJson(response);
-              //  Toast.makeText(getApplicationContext(), "" + response, Toast.LENGTH_LONG).show();
+                //  Toast.makeText(getApplicationContext(), "" + response, Toast.LENGTH_LONG).show();
 
             }
         }, new Response.ErrorListener() {
@@ -207,9 +248,9 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     private void checkStatus() {
         int conn = NetworkUtill.getConnectivityStatus(this);
         if (conn == NetworkUtill.TYPE_WIFI || conn == NetworkUtill.TYPE_MOBILE) {
-            if(!isNetConnected){
-            isNetConnected = true;
-            useVolley();
+            if (!isNetConnected) {
+                isNetConnected = true;
+                useVolley();
             }
         } else {
             Intent downloadIntent = new Intent(MainActivity.this, DisplayDownloadActivity.class);
@@ -230,9 +271,8 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     @Override
     protected void onResume() {
         super.onResume();
-        if(isNetConnected)
-        {
-            isNetConnected = true ;
+        if (isNetConnected) {
+            isNetConnected = true;
 
         }
 
@@ -254,7 +294,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     protected void onDestroy() {
         //  unregisterReceiver(mBroadcastReceiver);
         super.onDestroy();
-        isNetConnected = false ;
+        isNetConnected = false;
 
     }
 
@@ -270,6 +310,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 viewtype[i] = getViewType(fetchedData);
                 names[i] = getName(fetchedData);
                 urls[i] = getURL(fetchedData);
+                currentImage[i] = getImageId(fetchedData);
             }
 
         } catch (JSONException e) {
@@ -282,6 +323,8 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             m.setName(names[i]);
             m.setUrl(urls[i]);
             m.setType(viewtype[i]);
+            m.setImageId(currentImage[i]);
+            imagePos.add(String.valueOf(currentImage[i]));
             models.add(m);
 
         }
@@ -291,7 +334,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
 
             @Override
-            public void onItemClick(RecyclerView.ViewHolder ho ,View fullScreenImage, Model itemPostion)  {
+            public void onItemClick(RecyclerView.ViewHolder ho, View fullScreenImage, Model itemPostion) {
 
                 final int randomNo = new Random().nextInt(61) + 20;
                 //  int listenerType = itemPostion.getType();
@@ -334,10 +377,22 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                         }
 
                     }
+                    break;
+                    case R.id.home_image_like:
 
-                    case R.id.home_image_share :
+                        String imageId =  String.valueOf(itemPostion.getImageId());
+                        Toast.makeText(getApplicationContext(), "" + imageId, Toast.LENGTH_LONG).show();
+                        updateLike(ho,itemPostion);
+
+
+                        break;
+
+                    case R.id.home_image_unlike:
+                        updateunlike(ho,itemPostion);
+                       break;
+                    case R.id.home_image_share:
                         String text = "Look at my awesome picture";
-                    ImageView   content = (ImageView) ho.itemView.findViewById(R.id.home_main_image);
+                        ImageView content = (ImageView) ho.itemView.findViewById(R.id.home_main_image);
                         content.setDrawingCacheEnabled(true);
                         Bitmap bitmap = Bitmap.createBitmap(content.getDrawingCache());
                         File cachePath = new File("/storage/emulated/0/Download/Craic/image.jpg");
@@ -351,7 +406,6 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                         }
 
 
-
                         Intent share = new Intent(Intent.ACTION_SEND);
                         Uri phototUri = Uri.parse("/storage/emulated/0/Download/Craic/image.jpg");
                         share.setData(phototUri);
@@ -359,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                         share.putExtra(Intent.EXTRA_TEXT, text);
                         share.putExtra(Intent.EXTRA_STREAM, phototUri);
                         share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        fullScreenImage.getContext().startActivity(Intent.createChooser(share,"Share via"));
+                        fullScreenImage.getContext().startActivity(Intent.createChooser(share, "Share via"));
 
                         break;
                     case R.id.home_main_gif_image:
@@ -388,8 +442,8 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                         sharingIntent.setType("text/plain");
                         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
                         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, getName);
-     //                   startActivity(Intent.createChooser(sharingIntent, getResources().getString(R.string.share_using)));
-                         startActivity(Intent.createChooser(sharingIntent,"Share to"));
+                        //                   startActivity(Intent.createChooser(sharingIntent, getResources().getString(R.string.share_using)));
+                        startActivity(Intent.createChooser(sharingIntent, "Share to"));
                         break;
 
                 }
@@ -458,8 +512,152 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
     }
 
+    private void updateunlike(RecyclerView.ViewHolder ho, final Model itemPostion) {
+
+            StringRequest updateunLike = new StringRequest(Request.Method.POST, UPDATEUNLIKE_URL, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Toast.makeText(getApplicationContext(), "" + response, Toast.LENGTH_LONG).show();
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    // Toast.makeText(getApplicationContext(), "" + error.getMessage() , Toast.LENGTH_LONG).show();
+
+
+                }
+            }){
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    String imageId =  String.valueOf(itemPostion.getImageId());
+                    Map<String, String> params = new HashMap<>();
+                    //Adding parameters to request
+                    params.put("id",imageId );
+
+                    return params;
+                }
+            };
+
+
+            RequestQueue lRequestQueue = Volley.newRequestQueue(this);
+            lRequestQueue.add(updateunLike);
+
+            ImageView countunLike = (ImageView)ho.itemView.findViewById(R.id.home_image_unlike);
+            if(countunLike.getVisibility()==View.VISIBLE) {
+                countunLike.setVisibility(View.GONE);
+
+                if(countunLike.getVisibility()==View.GONE)
+                {
+                    ImageView showlike = (ImageView) ho.itemView.findViewById(R.id.home_image_like);
+                    showlike.setVisibility(View.VISIBLE);
+                    boolean del = saveLikeid.remove(String.valueOf(itemPostion.getImageId()));
+                    if(del) {
+
+                        addImageId = getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+                        Editor editor = addImageId.edit();
+                        editor.clear();
+                        editor.putStringSet("ImageIds", saveLikeid);
+                        editor.commit();
+                    }
+                }
+
+                if(null==deleteLikeid)
+                {
+                    deleteLikeid = new HashSet<>();
+
+                }
+              //  deleteLikeid.clear();
+             //   String iddd= String.valueOf(itemPostion.getImageId());
+             //   deleteLikeid.add(String.valueOf(itemPostion.getImageId()));
+             //   boolean del = saveLikeid.removeAll(deleteLikeid);
+
+//
+//  SharedPreferences removeImageid = getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+//
+//                if(removeImageid.contains(String.valueOf(itemPostion.getImageId()))
+//                        )
+//                {
+//                    removeImageid.edit().remove(String.valueOf(itemPostion.getImageId())).apply();
+//
+//                }
+                /*Editor editRemoveImageid = removeImageid.edit();
+                editRemoveImageid.remove(String.valueOf(itemPostion.getImageId()));
+                editRemoveImageid.apply();
+*/
+
+
+            }
+
+
+
+        }
+
+    private void updateLike(final RecyclerView.ViewHolder ho, final Model itemPostion) {
+        // saveLikeid ;
+        StringRequest updateLike = new StringRequest(Request.Method.POST, UPDATELIKE_URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(getApplicationContext(), "" + response, Toast.LENGTH_LONG).show();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+               // Toast.makeText(getApplicationContext(), "" + error.getMessage() , Toast.LENGTH_LONG).show();
+
+
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                String imageId =  String.valueOf(itemPostion.getImageId());
+                Map<String, String> params = new HashMap<>();
+                //Adding parameters to request
+                params.put("id",imageId );
+
+                return params;
+            }
+        };
+
+
+        RequestQueue lRequestQueue = Volley.newRequestQueue(this);
+        lRequestQueue.add(updateLike);
+
+ImageView countLike = (ImageView)ho.itemView.findViewById(R.id.home_image_like);
+        if(countLike.getVisibility()==View.VISIBLE) {
+            countLike.setVisibility(View.GONE);
+
+            if(countLike.getVisibility()==View.GONE)
+            {
+                ImageView showUnlike = (ImageView) ho.itemView.findViewById(R.id.home_image_unlike);
+                showUnlike.setVisibility(View.VISIBLE);
+
+                if(null==saveLikeid)
+                {
+                    saveLikeid = new HashSet<>();
+
+                }
+                saveLikeid.add(String.valueOf(itemPostion.getImageId()));
+
+                 addImageId = getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+                Editor  editor= addImageId.edit();
+                editor.putStringSet("ImageIds",saveLikeid);
+                editor.commit();
+
+
+
+            }
+
+
+        }
+
+
+    }
+
+
     private void speakOut(String text) {
-      //  String text = getText.getText().toString();
+        //  String text = getText.getText().toString();
 
         mListenText.speak(text, TextToSpeech.QUEUE_FLUSH, null);
 
@@ -473,6 +671,17 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             e.printStackTrace();
         }
         return viewtype;
+    }
+    private int getImageId(JSONObject fetchedData) {
+
+        int currentImage = 0;
+        try {
+            currentImage = fetchedData.getInt("id");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return currentImage;
     }
 
     private String getName(JSONObject fetchedData) {
@@ -506,7 +715,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 Log.e("TTS", "This Language is not supported");
             } else {
                 //getTextVoice.setEnabled(true);
-               // speakOut(S);
+                // speakOut(S);
             }
 
         } else {

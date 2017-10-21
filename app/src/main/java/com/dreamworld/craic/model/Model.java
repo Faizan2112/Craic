@@ -14,6 +14,42 @@ public class Model {
     public String url;
     public String name;
     public String text;
+    private int imageId ;
+    private String thumbNail ;
+    private String headTitel;
+    private int countLike ;
+
+    public int getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(int imageId) {
+        this.imageId = imageId;
+    }
+
+    public String getThumbNail() {
+        return thumbNail;
+    }
+
+    public void setThumbNail(String thumbNail) {
+        this.thumbNail = thumbNail;
+    }
+
+    public String getHeadTitel() {
+        return headTitel;
+    }
+
+    public void setHeadTitel(String headTitel) {
+        this.headTitel = headTitel;
+    }
+
+    public int getCountLike() {
+        return countLike;
+    }
+
+    public void setCountLike(int countLike) {
+        this.countLike = countLike;
+    }
 
     public Model() {
 

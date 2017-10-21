@@ -339,7 +339,7 @@ public class DisplayDownloadActivity extends AppCompatActivity implements OnDown
    if(!multiSelect){
         if(id == R.id.img) {
             String getItemPosition = itemPostion.getImage_ID();
-            Intent displayLarge = new Intent(getApplicationContext(),DetailContentActivity.class);
+            Intent displayLarge = new Intent(getApplicationContext(),DetailDownloadActivity.class);
             displayLarge.putExtra("fileImage",getItemPosition);
             displayLarge.putExtra("callFromDownload", 2);
             startActivity(displayLarge);

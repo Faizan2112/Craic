@@ -1,5 +1,6 @@
 package com.dreamworld.craic.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -37,6 +38,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     private ProgressBar progressBar = null;
     private ArrayList<CreateList> galleryList;
     private Context context;
+
     public static boolean multiSelect = false;
     private ArrayList<Integer> selectedItems = new ArrayList<Integer>();
     private OnDownloadActivity onDownloadActivity;
@@ -189,8 +191,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
     private void shareFiles(String s) {
     ArrayList<Uri> uriImage = new ArrayList<Uri>();
+
         Uri parseUri=null;
-       for(int i = 0 ; i<=s.length();i++ )
+       for(int i = 0 ; i<=selectedItems.size();i++ )
        {
           parseUri =Uri.parse(s);
            uriImage.add(parseUri);
@@ -201,8 +204,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         //share.setData(phototUri);
         share.setType("*/*");
          share.putParcelableArrayListExtra(Intent.EXTRA_STREAM,uriImage);
-        share.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-         this.context.startActivity(Intent.createChooser(share,"Share via"));
+        share.setPackage("com.whatsapp");
+
+       share.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+         context.startActivity(Intent.createChooser(share,"Share via"));
+
     }
 
     public void DeleteFile(String fileName) {

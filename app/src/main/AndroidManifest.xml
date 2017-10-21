@@ -22,9 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity" />
-        <activity
-            android:name=".activity.SplashActivity"
-            >
+        <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -34,7 +32,8 @@
         <activity android:name=".activity.DisplayDownloadActivity" />
         <activity android:name=".activity.DetailContentActivity" />
         <activity android:name=".activity.UploadActivity" />
-        <activity android:name=".activity.SuggestionActivity"></activity>
+        <activity android:name=".activity.SuggestionActivity" />
+        <activity android:name=".activity.DetailDownloadActivity"></activity>
     </application>
 
 </manifest><!--
