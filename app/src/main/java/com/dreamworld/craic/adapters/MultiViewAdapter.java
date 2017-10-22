@@ -42,7 +42,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     int lastPosition = -1;
     MediaPlayer mPlayer;
     List<Model> models;
-    public static   Set<String> demo;
+    public static Set<String> demo;
     private boolean fabStateVolume = false;
     private OnItemClickListener onItemClickListener;
     private OnHomeImageViewClick onHomeImageViewClick;
@@ -58,18 +58,27 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public static class TextTypeViewHolder extends RecyclerView.ViewHolder {
 
 
-        TextView txtType;
+        TextView mHeadText, mDate, mLikes, mMaintext;
         LinearLayout textLinearlayout;
-        ImageView mSharetext, mListentext;
+        ImageView mSharetext, mListentext, mHeadImage,mLikeImage, mUnlike;
 
 
         public TextTypeViewHolder(View itemView) {
             super(itemView);
 
-            this.txtType = (TextView) itemView.findViewById(R.id.home_main_text);
+            this.mMaintext = (TextView) itemView.findViewById(R.id.home_main_text);
             this.textLinearlayout = (LinearLayout) itemView.findViewById(R.id.home_main_text_type);
             this.mSharetext = (ImageView) itemView.findViewById(R.id.home_share_text);
             this.mListentext = (ImageView) itemView.findViewById(R.id.home_listen_text);
+            this.mHeadImage = (ImageView) itemView.findViewById(R.id.home_text_head_image);
+            this.mLikes = (TextView) itemView.findViewById(R.id.home_likes);
+            this.mDate = (TextView) itemView.findViewById(R.id.home_date);
+            this.mHeadText = (TextView) itemView.findViewById(R.id.home_head_text);
+            this.mLikeImage = (ImageView) itemView.findViewById(R.id.home_image_like);
+            this.mUnlike = (ImageView) itemView.findViewById(R.id.home_image_unlike);
+
+
+
         }
 
     }
@@ -77,7 +86,8 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public static class ImageTypeViewHolder extends RecyclerView.ViewHolder {
 
 
-        TextView txtType;
+        TextView mHeadText, mDate, mLikes;
+
         ImageView mMainImage, mHeadImage;
         ImageView mDownloadButton;
         ImageView mShareImage, mLikeImage, mUnlike;
@@ -92,6 +102,10 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             this.mShareImage = (ImageView) itemView.findViewById(R.id.home_image_share);
             this.mLikeImage = (ImageView) itemView.findViewById(R.id.home_image_like);
             this.mUnlike = (ImageView) itemView.findViewById(R.id.home_image_unlike);
+            this.mLikes = (TextView) itemView.findViewById(R.id.home_likes);
+            this.mDate = (TextView) itemView.findViewById(R.id.home_date);
+            this.mHeadText = (TextView) itemView.findViewById(R.id.home_head_text);
+
             //mDownloadButton.setOnClickListener(this);
         }
 
@@ -125,8 +139,9 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public static class GifTypeViewHolder extends RecyclerView.ViewHolder {
 
 
-        TextView txtType;
-        ImageView mGifImage, mGifHeadImage, mDownloadGif, mShareGif;
+        TextView mHeadText, mDate, mLikes, txtType;
+
+        ImageView mGifImage, mGifHeadImage, mDownloadGif, mShareGif ,mLikeImage, mUnlike;
         FloatingActionButton fab;
 
         public GifTypeViewHolder(View itemView) {
@@ -138,6 +153,13 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             this.mDownloadGif = (ImageView) itemView.findViewById(R.id.home_download_gif);
             this.mShareGif = (ImageView) itemView.findViewById(R.id.home_share_gif);
             this.fab = (FloatingActionButton) itemView.findViewById(R.id.fab);
+            this.mLikes = (TextView) itemView.findViewById(R.id.home_likes);
+            this.mDate = (TextView) itemView.findViewById(R.id.home_date);
+            this.mHeadText = (TextView) itemView.findViewById(R.id.home_head_text);
+            this.mLikeImage = (ImageView) itemView.findViewById(R.id.home_image_like);
+            this.mUnlike = (ImageView) itemView.findViewById(R.id.home_image_unlike);
+
+
 
         }
 
@@ -150,42 +172,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }
 
-    /*public MultiViewAdapter(Context context, String[] name , String[] urls , int [] viewtypes)
-    {
-        this.mContext = context;
-        int check = urls.length -1;
-        models = new ArrayList<Model>();
-        for(int i = 0 ;i<check ;i++)
-        {
-            Model datamodel = new Model();
-            datamodel.setName(name[i]);
-            datamodel.setUrl(urls[i]);
-            datamodel.setType(viewtypes[i]);
-            models.add(datamodel);
 
-        }
-
-
-    }
-*/
-
-
-    /*@Override
-    public int getItemViewType(int position) {
-
-        switch (dataSet.get(position).type) {
-            case 0:
-                return Model.TEXT_TYPE;
-            case 1:
-                return Model.IMAGE_TYPE;
-            case 2:
-                return Model.AUDIO_TYPE;
-            default:
-                return -1;
-        }
-
-
-    }*/
     @Override
     public int getItemViewType(int position) {
 
@@ -223,13 +210,20 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int listPosition) {
-
+        int pos = holder.getAdapterPosition();
         final Model object = dataSet.get(listPosition);
         if (object != null) {
             switch (object.type) {
                 case Model.TEXT_TYPE:
+                    changeDataSet(pos, holder);
                     //   ((TextTypeViewHolder) holder).txtType.setText(object.text);
-                    ((TextTypeViewHolder) holder).txtType.setText(dataSet.get(listPosition).getName());
+                    ((TextTypeViewHolder) holder).mMaintext.setText(dataSet.get(listPosition).getName());
+                    ((TextTypeViewHolder) holder).mHeadText.setText(dataSet.get(listPosition).getHeadTitel());
+                    ((TextTypeViewHolder) holder).mDate.setText(dataSet.get(listPosition).getDate());
+                    //TextTypeViewHolder) holder).mHeadImage.setImageResource(object.data);
+                    Glide.with(mContext).load(dataSet.get(listPosition).getHeadImage()).transform(new CircleTransform(mContext)).into(((TextTypeViewHolder) holder).mHeadImage);
+                    ((TextTypeViewHolder) holder).mLikes.setText((String.valueOf(dataSet.get(listPosition).getLikes())));
+
                     View.OnClickListener textTypeListener = new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -246,84 +240,26 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                     ((TextTypeViewHolder) holder).mListentext.setOnClickListener(textTypeListener);
                     ((TextTypeViewHolder) holder).mSharetext.setOnClickListener(textTypeListener);
+                    ((TextTypeViewHolder) holder).mLikeImage.setOnClickListener(textTypeListener);
+                    ((TextTypeViewHolder) holder).mUnlike.setOnClickListener(textTypeListener);
 
                     break;
                 case Model.IMAGE_TYPE:
                     //          ((ImageTypeViewHolder) holder).txtType.setText(object.getUrl());
                     //     ((ImageTypeViewHolder) holder).image.setImageResource(object.data);
 
-                   int pos = holder.getAdapterPosition();
-                    changeDataSet(pos,holder);
-                //    notifyItemChanged(dataSet.get(pos).getImageId());
-              //      notifyDataSetChanged();
 
-             //       Toast.makeText(mContext,""+pos,Toast.LENGTH_LONG );
-
-//                    if(null==demo) {
-//                      demo = new HashSet<>();
-//                  }
-//
-//                    demo.addAll(saveLikeid);
-//
-//                    for(int i = 0 ; i < listPosition ; i++ )
-//                    {
-//                        for(int j = 0 ; j <demo.size();j++)
-//                        {
-//                            if(demo.contains(imagePos.get(i)))
-//                            {
-//                                if(((ImageTypeViewHolder) holder).mLikeImage.getVisibility()==View.VISIBLE) {
-//                                    ((ImageTypeViewHolder) holder).mLikeImage.setVisibility(View.GONE);
-//
-//                                    if (((ImageTypeViewHolder) holder).mLikeImage.getVisibility() == View.GONE) {
-//
-//                                        ((ImageTypeViewHolder) holder).mUnlike.setVisibility(View.VISIBLE);
-//                                        demo.remove(imagePos.get(i));
-//                                        imagePos.remove(imagePos.get(i));
-//                                    }
-//                                }
-//
-//
-//                            }
-//
-//                        }
-//
-//
-//
-//                    }
+                    changeDataSet(pos, holder);
 
 
-     /*               int i = 0 ;
-                    int index = i ;
 
-                    for (i = index ; i <demo.size() ; i++) {
-                    // int imgesposition =   dataSet.get(listPosition).getImageId();
-                       for( int j = 0 ; j < imagePos.size() ;j++){
-                          if(demo.contains(imagePos.get(j))){
-                        if(((ImageTypeViewHolder) holder).mLikeImage.getVisibility()==View.VISIBLE) {
-                            ((ImageTypeViewHolder) holder).mLikeImage.setVisibility(View.GONE);
-
-                            if (((ImageTypeViewHolder) holder).mLikeImage.getVisibility() == View.GONE) {
-
-                                ((ImageTypeViewHolder) holder).mUnlike.setVisibility(View.VISIBLE);
-                                demo.remove(i);
-                                index = index + 1;
-
-                            }
-                        }
-
-                        }
-
-                         }
-
-
-                   }
-*/
                     ((ImageTypeViewHolder) holder).mMainImage.setImageResource(object.data);
                     Glide.with(mContext).load(dataSet.get(listPosition).getUrl()).fitCenter().placeholder(R.drawable.placeholder).into(((ImageTypeViewHolder) holder).mMainImage);
                     ((ImageTypeViewHolder) holder).mHeadImage.setImageResource(object.data);
-                    Glide.with(mContext).load(dataSet.get(listPosition).getUrl()).transform(new CircleTransform(mContext)).into(((ImageTypeViewHolder) holder).mHeadImage);
-
-
+                    Glide.with(mContext).load(dataSet.get(listPosition).getHeadImage()).transform(new CircleTransform(mContext)).into(((ImageTypeViewHolder) holder).mHeadImage);
+                     ((ImageTypeViewHolder) holder).mHeadText.setText(dataSet.get(listPosition).getHeadTitel());
+                    ((ImageTypeViewHolder) holder).mDate.setText(dataSet.get(listPosition).getDate());
+                   ((ImageTypeViewHolder) holder).mLikes.setText((String.valueOf(dataSet.get(listPosition).getLikes())));
                     //     private OnItemClickListener onItemClickListener;
                     View.OnClickListener imageTypeListener = new View.OnClickListener() {
                         @Override
@@ -347,10 +283,15 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     ((ImageTypeViewHolder) holder).mUnlike.setOnClickListener(imageTypeListener);
                     break;
                 case Model.AUDIO_TYPE:
+                    changeDataSet(pos, holder);
                     ((GifTypeViewHolder) holder).mGifImage.setImageResource(object.data);
                     Glide.with(mContext).load(dataSet.get(listPosition).getUrl()).asGif().placeholder(R.drawable.placeholder).centerCrop().into(((GifTypeViewHolder) holder).mGifImage);
                     ((GifTypeViewHolder) holder).mGifHeadImage.setImageResource(object.data);
-                    Glide.with(mContext).load(dataSet.get(listPosition).getUrl()).transform(new CircleTransform(mContext)).into(((GifTypeViewHolder) holder).mGifHeadImage);
+                    Glide.with(mContext).load(dataSet.get(listPosition).getHeadImage()).transform(new CircleTransform(mContext)).into(((GifTypeViewHolder) holder).mGifHeadImage);
+                    ((GifTypeViewHolder) holder).mHeadText.setText(dataSet.get(listPosition).getHeadTitel());
+                    ((GifTypeViewHolder) holder).mDate.setText(dataSet.get(listPosition).getDate());
+                   ((GifTypeViewHolder) holder).mLikes.setText((String.valueOf(dataSet.get(listPosition).getLikes())));
+
                     View.OnClickListener gifTypeListener = new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -365,7 +306,142 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     };
                     ((GifTypeViewHolder) holder).mDownloadGif.setOnClickListener(gifTypeListener);
                     ((GifTypeViewHolder) holder).mShareGif.setOnClickListener(gifTypeListener);
-/*
+                    ((GifTypeViewHolder) holder).mLikeImage.setOnClickListener(gifTypeListener);
+                    ((GifTypeViewHolder) holder).mUnlike.setOnClickListener(gifTypeListener);
+
+
+
+
+                    break;
+            }
+        }
+
+        if (listPosition > lastPosition) {
+
+            Animation animation = AnimationUtils.loadAnimation(mContext,
+                    R.anim.bottom_from_up);
+            holder.itemView.startAnimation(animation);
+            lastPosition = listPosition;
+        } else {
+
+            Animation animation = AnimationUtils.loadAnimation(mContext,
+                    R.anim.up_from_bottom);
+            holder.itemView.startAnimation(animation);
+            lastPosition = listPosition;
+        }
+
+    }
+
+    private void changeDataSet(int pos, RecyclerView.ViewHolder holder) {
+        int findImagePostion = dataSet.get(pos).getImageId();
+
+        for (int i = 0; i < saveLikeid.size(); i++) {
+            //saveLikeid.contains(findImagePostion);
+
+            boolean vl = saveLikeid.contains(String.valueOf(findImagePostion));
+            if (vl) {
+
+
+            int viewTypeid = holder.getItemViewType();
+                if(viewTypeid == 0) {
+                    if (((TextTypeViewHolder) holder).mLikeImage.getVisibility() == View.VISIBLE) {
+                        ((TextTypeViewHolder) holder).mLikeImage.setVisibility(View.GONE);
+
+                        if (((TextTypeViewHolder) holder).mLikeImage.getVisibility() == View.GONE) {
+
+                            ((TextTypeViewHolder) holder).mUnlike.setVisibility(View.VISIBLE);
+
+                            break;
+
+
+                        }
+
+
+                    }
+                }
+                if(viewTypeid == 1) {
+                    if (((ImageTypeViewHolder) holder).mLikeImage.getVisibility() == View.VISIBLE) {
+                        ((ImageTypeViewHolder) holder).mLikeImage.setVisibility(View.GONE);
+
+                        if (((ImageTypeViewHolder) holder).mLikeImage.getVisibility() == View.GONE) {
+
+                            ((ImageTypeViewHolder) holder).mUnlike.setVisibility(View.VISIBLE);
+
+                            break;
+
+
+                        }
+
+
+                    }
+                }
+
+                if(viewTypeid == 2) {
+                    if (((GifTypeViewHolder) holder).mLikeImage.getVisibility() == View.VISIBLE) {
+                        ((GifTypeViewHolder) holder).mLikeImage.setVisibility(View.GONE);
+
+                        if (((GifTypeViewHolder) holder).mLikeImage.getVisibility() == View.GONE) {
+
+                            ((GifTypeViewHolder) holder).mUnlike.setVisibility(View.VISIBLE);
+
+                            break;
+
+
+                        }
+
+
+                    }
+                }
+
+            }
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return dataSet.size();
+    }
+
+
+}
+
+  /*public MultiViewAdapter(Context context, String[] name , String[] urls , int [] viewtypes)
+    {
+        this.mContext = context;
+        int check = urls.length -1;
+        models = new ArrayList<Model>();
+        for(int i = 0 ;i<check ;i++)
+        {
+            Model datamodel = new Model();
+            datamodel.setName(name[i]);
+            datamodel.setUrl(urls[i]);
+            datamodel.setType(viewtypes[i]);
+            models.add(datamodel);
+
+        }
+
+
+    }
+*/
+
+
+    /*@Override
+    public int getItemViewType(int position) {
+
+        switch (dataSet.get(position).type) {
+            case 0:
+                return Model.TEXT_TYPE;
+            case 1:
+                return Model.IMAGE_TYPE;
+            case 2:
+                return Model.AUDIO_TYPE;
+            default:
+                return -1;
+        }
+
+
+    }*/
+    /*
                     ((AudioTypeViewHolder) holder).txtType.setText(object.text);
 
 
@@ -392,59 +468,3 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         }
                     });
 */
-
-
-                    break;
-            }
-        }
-
-        if (listPosition > lastPosition) {
-
-            Animation animation = AnimationUtils.loadAnimation(mContext,
-                    R.anim.bottom_from_up);
-            holder.itemView.startAnimation(animation);
-            lastPosition = listPosition;
-        } else {
-
-            Animation animation = AnimationUtils.loadAnimation(mContext,
-                    R.anim.up_from_bottom);
-            holder.itemView.startAnimation(animation);
-            lastPosition = listPosition;
-        }
-
-    }
-
-    private void changeDataSet(int pos, RecyclerView.ViewHolder holder) {
-        int findImagePostion = dataSet.get(pos).getImageId();
-
-        for(int i = 0 ; i < saveLikeid.size() ; i++  )
-        {
-            //saveLikeid.contains(findImagePostion);
-
-            boolean vl = saveLikeid.contains(String.valueOf(findImagePostion));
-            if(vl)
-            {
-                if(((ImageTypeViewHolder) holder).mLikeImage.getVisibility()==View.VISIBLE) {
-                    ((ImageTypeViewHolder) holder).mLikeImage.setVisibility(View.GONE);
-
-                    if (((ImageTypeViewHolder) holder).mLikeImage.getVisibility() == View.GONE) {
-
-                        ((ImageTypeViewHolder) holder).mUnlike.setVisibility(View.VISIBLE);
-
-
-            }
-
-
-        }
-
-
-    }}}
-
-    @Override
-    public int getItemCount() {
-        return dataSet.size();
-    }
-
-
-}
-

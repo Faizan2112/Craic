@@ -27,6 +27,42 @@
 
     <dimen name="main_card_bottom_text_size">10sp</dimen>
     <dimen name="main_card_head_text_size">10sp</dimen>
+<!--padding_sizes -->
+    <dimen name="padding_sizes10">10dp</dimen>
+    <dimen name="padding_sizes5">5dp</dimen>
+
+    <!--text_size-->
+
+    <dimen name="text_size12">12sp</dimen>
+    <dimen name="text_size14">10sp</dimen>
+    <dimen name="text_size16">16sp</dimen>
+    <dimen name="text_size18">18sp</dimen>
+    <dimen name="text_size20">20sp</dimen>
+    <dimen name="text_size22">22sp</dimen>
+    <dimen name="text_size24">24sp</dimen>
+    <dimen name="text_size26">26sp</dimen>
+    <dimen name="text_size28">28sp</dimen>
+    <dimen name="text_size30">30sp</dimen>
+    <dimen name="text_size40">40sp</dimen>
+
+
+    <!--ction br-->
+    <dimen name="actionbar24">24dp</dimen>
+    <dimen name="actionbar25">40sp</dimen>
+
+
+    <!--layout_wieght -->
+    <!--<dimen name="layout_wieght1">.1</dimen>-->
+    <!--<dimen name="layout_wieght2">.2</dimen>-->
+    <!--<dimen name="layout_wieght3">.3</dimen>-->
+    <!--<dimen name="layout_wieght4">.4</dimen>-->
+    <!--<dimen name="layout_wieght5">.5</dimen>-->
+    <!--<dimen name="layout_wieght6">.6</dimen>-->
+    <!--<dimen name="layout_wieght7">.7</dimen>-->
+    <!--<dimen name="layout_wieght8">.8</dimen>-->
+    <!--<dimen name="layout_wieght9">.9</dimen>-->
+    <!--<dimen name="layout_wieght10">1</dimen>-->
+    <!--<dimen name="layout_wieght_sum1">1</dimen>-->
 
 
 </resources>

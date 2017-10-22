@@ -76,7 +76,12 @@ import static com.dreamworld.craic.configuration.Config.SHARED_PREF_NAME;
 import static com.dreamworld.craic.configuration.Config.UPDATELIKE_URL;
 import static com.dreamworld.craic.configuration.Config.UPDATEUNLIKE_URL;
 import static com.dreamworld.craic.configuration.Config.currentImage;
+import static com.dreamworld.craic.configuration.Config.date;
+import static com.dreamworld.craic.configuration.Config.headImage;
+import static com.dreamworld.craic.configuration.Config.headTitel;
+import static com.dreamworld.craic.configuration.Config.likes;
 import static com.dreamworld.craic.configuration.Config.names;
+
 import static com.dreamworld.craic.configuration.Config.urls;
 import static com.dreamworld.craic.configuration.Config.viewtype;
 
@@ -186,9 +191,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         saveLikeid = addImageId.getStringSet("ImageIds",saveLikeid);
 
       //  Iterator<String> it ;
-        for (String s : saveLikeid) {
-            //Toast.makeText(getApplicationContext(),""+s.toString(),Toast.LENGTH_LONG);
-        }
+
 
 
 
@@ -311,6 +314,10 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 names[i] = getName(fetchedData);
                 urls[i] = getURL(fetchedData);
                 currentImage[i] = getImageId(fetchedData);
+                headImage[i] = getHeadImage(fetchedData);
+                date[i] = getDate(fetchedData);
+                likes[i] = getLikes(fetchedData);
+                headTitel[i] = getHeadTitel(fetchedData) ;
             }
 
         } catch (JSONException e) {
@@ -324,7 +331,10 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             m.setUrl(urls[i]);
             m.setType(viewtype[i]);
             m.setImageId(currentImage[i]);
-            imagePos.add(String.valueOf(currentImage[i]));
+            m.setHeadImage(headImage[i]);
+            m.setHeadTitel(headTitel[i]);
+            m.setDate(date[i]);
+            m.setLikes(likes[i]);
             models.add(m);
 
         }
@@ -451,74 +461,20 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
             }
         });
-   /*     adapter.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(Model item) {
 
-
-             //   final TextToSpeech finalListenText = listenText;
-
-                final int randomNo = new Random().nextInt(61) + 20;
-                int listenerType = item.getType();
-
-
-
-                if (listenerType == 1) {
-                    Toast.makeText(MainActivity.this, item.getUrl(), Toast.LENGTH_LONG).show();
-                    String name_ = "images" + randomNo;
-                    File direct = new File(Environment.getExternalStorageDirectory() + "/Download/craic", name_);
-
-                    if (!direct.exists()) {
-                        File wallpaperDirectory = new File("/sdcard/Download/craic/", name_);
-                        wallpaperDirectory.getParentFile().mkdirs();
-                    }
-                    new DownloadTask(MainActivity.this, direct, "downloading").execute(item.getUrl());
-                } else if (listenerType == 0) {
-
-                    listenText=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-                        @Override
-                        public void onInit(int status) {
-                            if(status == TextToSpeech.SUCCESS) {
-                                listenText.setLanguage(Locale.UK);
-                            }
-                            else {
-                                Log.e("TTS", "Initialization failed");
-                            }
-                        }
-                    });
-                    Toast.makeText(MainActivity.this, item.getName(), Toast.LENGTH_LONG).show();
-                    listenText.speak(item.getName(), TextToSpeech.QUEUE_FLUSH, null);
-
-
-
-                } else if (listenerType == 2) {
-                    Toast.makeText(MainActivity.this, item.getUrl(), Toast.LENGTH_LONG).show();
-                    String name_ = "gifs" + randomNo +".gif";
-                    File direct = new File(Environment.getExternalStorageDirectory() + "/Download/craic", name_);
-
-                    if (!direct.exists()) {
-                        File wallpaperDirectory = new File("/sdcard/Download/craic/", name_);
-                        wallpaperDirectory.getParentFile().mkdirs();
-                    }
-                    new DownloadTask(MainActivity.this, direct, "downloading").execute(item.getUrl());
-
-                }
-            }
-
-        });
-
-*/
 
 
     }
 
-    private void updateunlike(RecyclerView.ViewHolder ho, final Model itemPostion) {
+
+
+    private void updateunlike(final RecyclerView.ViewHolder ho, final Model itemPostion) {
 
             StringRequest updateunLike = new StringRequest(Request.Method.POST, UPDATEUNLIKE_URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     Toast.makeText(getApplicationContext(), "" + response, Toast.LENGTH_LONG).show();
-
+                    parseLike(response,ho);
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -558,7 +514,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                         Editor editor = addImageId.edit();
                         editor.clear();
                         editor.putStringSet("ImageIds", saveLikeid);
-                        editor.commit();
+                        editor.apply();
                     }
                 }
 
@@ -599,6 +555,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             @Override
             public void onResponse(String response) {
                 Toast.makeText(getApplicationContext(), "" + response, Toast.LENGTH_LONG).show();
+                parseLike(response,ho);
 
             }
         }, new Response.ErrorListener() {
@@ -643,13 +600,31 @@ ImageView countLike = (ImageView)ho.itemView.findViewById(R.id.home_image_like);
                  addImageId = getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
                 Editor  editor= addImageId.edit();
                 editor.putStringSet("ImageIds",saveLikeid);
-                editor.commit();
+                editor.apply();
 
 
 
             }
 
 
+        }
+
+
+    }
+
+    private void parseLike(String response, RecyclerView.ViewHolder ho) {
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            JSONArray array = jsonObject.getJSONArray(Config.TAG_JSON_ARRAY);
+            JSONObject likeValuePos = array.getJSONObject(0);
+            String likeValue = likeValuePos.getString("likes");
+          //  mConfigFile = new Config(array.length());
+            TextView likeUpdate = (TextView) ho.itemView.findViewById(R.id.home_likes);
+            likeUpdate.setText(likeValue);
+
+            // JSONObject fetchedData = array.getJSONObject("likes");}
+            } catch (JSONException e) {
+            e.printStackTrace();
         }
 
 
@@ -693,6 +668,28 @@ ImageView countLike = (ImageView)ho.itemView.findViewById(R.id.home_image_like);
         }
         return name;
     }
+    private String getHeadImage(JSONObject fetchedData) {
+        String headImage = null;
+        try {
+            headImage = fetchedData.getString("thumbnail");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return headImage;
+    }
+    private String getHeadTitel(JSONObject fetchedData) {
+        String headImage = null;
+        try {
+            headImage = fetchedData.getString("headdetail");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return headImage;
+
+    }
+
+
+
 
     private String getURL(JSONObject fetchedData) {
         String url = null;
@@ -703,6 +700,25 @@ ImageView countLike = (ImageView)ho.itemView.findViewById(R.id.home_image_like);
         }
         return url;
     }
+    private String getDate(JSONObject fetchedData) {
+        String date = null;
+        try {
+            date = fetchedData.getString("date");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+    private int getLikes(JSONObject fetchedData) {
+        int likes = 0;
+        try {
+            likes = fetchedData.getInt("likes");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return likes;
+    }
+
 
     @Override
     public void onInit(int status) {

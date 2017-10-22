@@ -13,6 +13,11 @@ public class Config {
     //public static Bitmap[] bitmaps;
     public static int[] viewtype;
     public static int[] currentImage;
+    public static String[] headImage;
+    public static String[] date;
+    public static int[] likes;
+    public static String[] headTitel;
+
 
 
    // public static final String GET_URL = "http://faizandream21.000webhostapp.com/PhotoUploadWithText/getImage.php";
@@ -38,5 +43,9 @@ public class Config {
         //bitmaps = new Bitmap[i];
         viewtype = new int[i];
         currentImage = new int[i];
+        headImage = new String[i];
+        date = new  String[i] ;
+        likes = new  int[i];
+        headTitel = new String[i];
     }
 }

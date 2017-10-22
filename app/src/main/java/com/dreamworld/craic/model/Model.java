@@ -15,9 +15,39 @@ public class Model {
     public String name;
     public String text;
     private int imageId ;
-    private String thumbNail ;
+    private int likes ;
+    private String headImage ;
     private String headTitel;
-    private int countLike ;
+    private String date;
+
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+
+
+
+    public String getHeadImage() {
+        return headImage;
+    }
+
+    public void setHeadImage(String headImage) {
+        this.headImage = headImage;
+    }
+
+
 
     public int getImageId() {
         return imageId;
@@ -27,13 +57,7 @@ public class Model {
         this.imageId = imageId;
     }
 
-    public String getThumbNail() {
-        return thumbNail;
-    }
 
-    public void setThumbNail(String thumbNail) {
-        this.thumbNail = thumbNail;
-    }
 
     public String getHeadTitel() {
         return headTitel;
@@ -43,13 +67,7 @@ public class Model {
         this.headTitel = headTitel;
     }
 
-    public int getCountLike() {
-        return countLike;
-    }
 
-    public void setCountLike(int countLike) {
-        this.countLike = countLike;
-    }
 
     public Model() {
 
