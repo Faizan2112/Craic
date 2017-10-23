@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="true"
+
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <!--
@@ -50,13 +51,13 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
 
-            app:layout_collapseMode="pin">
-<ImageView
-    android:layout_width="80dp"
-    android:layout_height="match_parent"
-    android:layout_gravity="center"
-    android:background="@drawable/toll80"
-    />
+            app:layout_collapseMode="pin"
+           >
+            <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:background="@drawable/toolhead1440" />
 
         </android.support.v7.widget.Toolbar>
 

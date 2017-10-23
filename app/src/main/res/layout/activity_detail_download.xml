@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/downdeatail"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/detilimage1440"
     android:orientation="vertical"
     android:weightSum="1"
 
@@ -12,20 +13,44 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".52">
+        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_weight=".46">
 
-        <ImageView
-            android:id="@+id/detil_download"
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
 
-            />
+            app:cardCornerRadius="@dimen/padding_sizes5"
+            app:cardElevation="@dimen/padding_sizes10">
+
+            <ImageView
+                android:id="@+id/detil_download"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                />
+        </android.support.v7.widget.CardView>
+
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/padding_sizes10"
+        android:layout_weight=".08"
+        android:gravity="center"
+        android:text="image nme"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/text_size22"
+        android:textStyle="bold"
+
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".38">
+        android:layout_weight=".36">
 
 
     </LinearLayout>
@@ -40,8 +65,7 @@
             android:layout_width="match_parent"
 
             android:layout_height="match_parent"
-            android:background="@drawable/shrebutton"
-            />
+            android:background="@drawable/shrebutton" />
 
 
     </LinearLayout>

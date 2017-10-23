@@ -26,8 +26,8 @@ public class DetailContentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_content);
 
-        mDisplayFullImage = (ImageView) findViewById(R.id.detail_main_image);
-        mDisplayFullImage1 =(ImageView) findViewById(R.id.detail_main_image1);
+       // mDisplayFullImage = (ImageView) findViewById(R.id.detail_main_image);
+       // mDisplayFullImage1 =(ImageView) findViewById(R.id.detail_main_image1);
         findExtraIntent();
     }
 

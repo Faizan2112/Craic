@@ -120,11 +120,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         mRecyclerView = (RecyclerView) findViewById(recyclerView);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.main_swipe_refresh);
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
-        Toolbar tb = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(tb);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        //toolbar.setNavigationIcon(R.drawable.ic_toolbar);
-        tb.setTitle("");
+//
 
         // Get the ActionBar here to configure the way it behaves.
 //        final ActionBar ab = getSupportActionBar();
