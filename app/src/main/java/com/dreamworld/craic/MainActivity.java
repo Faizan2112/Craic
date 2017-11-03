@@ -17,17 +17,14 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,7 +36,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.bumptech.glide.Glide;
 import com.dreamworld.craic.activity.DetailContentActivity;
 import com.dreamworld.craic.activity.DisplayDownloadActivity;
 import com.dreamworld.craic.activity.SuggestionActivity;
@@ -59,11 +55,9 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
@@ -105,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     public static Set<String> deleteLikeid ;
    public static ArrayList<String> imagePos= new ArrayList<>();
     private static SharedPreferences addImageId;
+    private int conn;
 
 
     @Override
@@ -120,16 +115,6 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         mRecyclerView = (RecyclerView) findViewById(recyclerView);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.main_swipe_refresh);
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
-//
-
-        // Get the ActionBar here to configure the way it behaves.
-//        final ActionBar ab = getSupportActionBar();
-//        //ab.setHomeAsUpIndicator(R.drawable.ic_menu); // set a custom icon for the default home button
-//        ab.setDisplayShowHomeEnabled(true); // show or hide the default home button
-//        ab.setDisplayHomeAsUpEnabled(true);
-//        ab.setDisplayShowCustomEnabled(true); // enable overriding the default toolbar layout
-//        ab.setDisplayShowTitleEnabled(false); // disable the default title element here (for centered title)
-//
 
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -147,19 +132,19 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                     case R.id.main_menu_dowload:
                         Intent i = new Intent(getApplicationContext(), DisplayDownloadActivity.class);
                         startActivity(i);
-                        Toast.makeText(getApplicationContext(), "downlod", Toast.LENGTH_LONG).show();
+                      //  Toast.makeText(getApplicationContext(), "downlod", Toast.LENGTH_LONG).show();
                         break;
                     case R.id.main_menu_suggestion:
                         Intent is = new Intent(getApplicationContext(), SuggestionActivity.class);
                         startActivity(is);
 
-                        Toast.makeText(getApplicationContext(), "feed_btm_my_share", Toast.LENGTH_LONG).show();
+                     //   Toast.makeText(getApplicationContext(), "feed_btm_my_share", Toast.LENGTH_LONG).show();
                         break;
                     case R.id.main_menu_upload:
                         Intent in = new Intent(getApplicationContext(), UploadActivity.class);
                         startActivity(in);
 
-                        Toast.makeText(getApplicationContext(), "UploadActivity", Toast.LENGTH_LONG).show();
+                  //      Toast.makeText(getApplicationContext(), "UploadActivity", Toast.LENGTH_LONG).show();
                         break;
                 }
                 return false;
@@ -245,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     }
 
     private void checkStatus() {
-        int conn = NetworkUtill.getConnectivityStatus(this);
+         conn = NetworkUtill.getConnectivityStatus(this);
         if (conn == NetworkUtill.TYPE_WIFI || conn == NetworkUtill.TYPE_MOBILE) {
             if (!isNetConnected) {
                 isNetConnected = true;
@@ -265,6 +250,11 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     @Override
     protected void onRestart() {
         super.onRestart();
+        if (isNetConnected) {
+            isNetConnected = false;
+            useVolley();
+
+        }
     }
 
     @Override
@@ -272,6 +262,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         super.onResume();
         if (isNetConnected) {
             isNetConnected = true;
+            useVolley();
 
         }
 
@@ -351,8 +342,8 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
                 switch (adapterIds) {
                     case R.id.home_main_downloadImage:
-                        if (getModelType == Model.IMAGE_TYPE) {
-                            Toast.makeText(MainActivity.this, itemPostion.getUrl(), Toast.LENGTH_LONG).show();
+                      //
+                          // Toast.makeText(MainActivity.this, itemPostion.getUrl(), Toast.LENGTH_LONG).show();
                             String name_ = "images" + randomNo;
                             File direct = new File(Environment.getExternalStorageDirectory() + "/Download/craic", name_);
 
@@ -362,42 +353,60 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                             }
                             new DownloadTask(MainActivity.this, direct, "downloading").execute(itemPostion.getUrl());
 
-                        }
+                      //  }
 
                         break;
                     case R.id.home_main_image:
 
                     {
 
-                        if (getModelType == Model.IMAGE_TYPE) {
+                    //
 
                             String imageUrl = itemPostion.getUrl();
-                            String value = "1";
+                            String imageName = itemPostion.getHeadTitel();
+
                             Intent sendImage = new Intent(MainActivity.this, DetailContentActivity.class);
                             //  sendImage.putExtra(imageUrl, "detailImageUrl");
-                            sendImage.putExtra("detailImageUrl", imageUrl);
-                            sendImage.putExtra("callFromMain", value);
+                            sendImage.putExtra("imageUrl", imageUrl);
+                            sendImage.putExtra("imageName", imageName);
                             startActivity(sendImage);
-                            Toast.makeText(getApplicationContext(), "" + getItemPosition + "" + getName + "" + getModelType, Toast.LENGTH_LONG).show();
+                       //     Toast.makeText(getApplicationContext(), "" + getItemPosition + "" + getName + "" + getModelType, Toast.LENGTH_LONG).show();
 
                         }
 
-                    }
+                   // }
                     break;
                     case R.id.home_image_like:
 
                         String imageId =  String.valueOf(itemPostion.getImageId());
-                        Toast.makeText(getApplicationContext(), "" + imageId, Toast.LENGTH_LONG).show();
-                        updateLike(ho,itemPostion);
+                  //      Toast.makeText(getApplicationContext(), "" + imageId, Toast.LENGTH_LONG).show();
+                        int conn2 = NetworkUtill.getConnectivityStatus(getApplicationContext());
+                       if(conn2 == NetworkUtill.TYPE_WIFI || conn2 == NetworkUtill.TYPE_MOBILE) {
+                           updateLike(ho, itemPostion);
+                       }else
+                           {
+                               Toast.makeText(getApplicationContext(),"Please turn on Internet Connection" ,Toast.LENGTH_SHORT).show();
 
+                           }
 
                         break;
 
                     case R.id.home_image_unlike:
-                        updateunlike(ho,itemPostion);
+
+
+
+                        int conn3 = NetworkUtill.getConnectivityStatus(getApplicationContext());
+                        if(conn3 == NetworkUtill.TYPE_WIFI || conn3 == NetworkUtill.TYPE_MOBILE) {
+                            updateunlike(ho,itemPostion);
+                        }else
+                        {
+                            Toast.makeText(getApplicationContext(),"Please turn on Internet Connection" ,Toast.LENGTH_SHORT).show();
+
+                        }
+
                        break;
-                    case R.id.home_image_share:
-                        String text = "Look at my awesome picture";
+                    case R.id.home_gif_share:
+                        String text = "Download this app Craic";
                         ImageView content = (ImageView) ho.itemView.findViewById(R.id.home_main_image);
                         content.setDrawingCacheEnabled(true);
                         Bitmap bitmap = Bitmap.createBitmap(content.getDrawingCache());
@@ -422,20 +431,20 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                         fullScreenImage.getContext().startActivity(Intent.createChooser(share, "Share via"));
 
                         break;
-                    case R.id.home_main_gif_image:
-                        if (getModelType == Model.IMAGE_TYPE) {
-                            Toast.makeText(MainActivity.this, itemPostion.getUrl(), Toast.LENGTH_LONG).show();
-                            String name_ = "gifs" + randomNo + ".gif";
-                            File direct = new File(Environment.getExternalStorageDirectory() + "/Download/craic", name_);
-
-                            if (!direct.exists()) {
-                                File wallpaperDirectory = new File("/sdcard/Download/craic/", name_);
-                                wallpaperDirectory.getParentFile().mkdirs();
-                            }
-                            new DownloadTask(MainActivity.this, direct, "downloading").execute(itemPostion.getUrl());
-
-                        }
-                        break;
+//                    case R.id.home_main_image:
+//                        if (getModelType == Model.IMAGE_TYPE) {
+//                            Toast.makeText(MainActivity.this, itemPostion.getUrl(), Toast.LENGTH_LONG).show();
+//                            String name_ = "gifs" + randomNo + ".gif";
+//                            File direct = new File(Environment.getExternalStorageDirectory() + "/Download/craic", name_);
+//
+//                            if (!direct.exists()) {
+//                                File wallpaperDirectory = new File("/sdcard/Download/craic/", name_);
+//                                wallpaperDirectory.getParentFile().mkdirs();
+//                            }
+//                            new DownloadTask(MainActivity.this, direct, "downloading").execute(itemPostion.getUrl());
+//
+//                        }
+//                        break;
 
                     case R.id.home_listen_text:
 
@@ -469,7 +478,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             StringRequest updateunLike = new StringRequest(Request.Method.POST, UPDATEUNLIKE_URL, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Toast.makeText(getApplicationContext(), "" + response, Toast.LENGTH_LONG).show();
+                  //  Toast.makeText(getApplicationContext(), "" + response, Toast.LENGTH_LONG).show();
                     parseLike(response,ho);
                 }
             }, new Response.ErrorListener() {
@@ -550,7 +559,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         StringRequest updateLike = new StringRequest(Request.Method.POST, UPDATELIKE_URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Toast.makeText(getApplicationContext(), "" + response, Toast.LENGTH_LONG).show();
+             //   Toast.makeText(getApplicationContext(), "" + response, Toast.LENGTH_LONG).show();
                 parseLike(response,ho);
 
             }
@@ -714,6 +723,18 @@ ImageView countLike = (ImageView)ho.itemView.findViewById(R.id.home_image_like);
         }
         return likes;
     }
+
+    //
+
+    // Get the ActionBar here to configure the way it behaves.
+//        final ActionBar ab = getSupportActionBar();
+//        //ab.setHomeAsUpIndicator(R.drawable.ic_menu); // set a custom icon for the default home button
+//        ab.setDisplayShowHomeEnabled(true); // show or hide the default home button
+//        ab.setDisplayHomeAsUpEnabled(true);
+//        ab.setDisplayShowCustomEnabled(true); // enable overriding the default toolbar layout
+//        ab.setDisplayShowTitleEnabled(false); // disable the default title element here (for centered title)
+//
+
 
 
     @Override

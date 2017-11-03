@@ -29,7 +29,7 @@
     <dimen name="main_card_head_text_size">10sp</dimen>
 <!--padding_sizes -->
     <dimen name="padding_sizes10">10dp</dimen>
-    <dimen name="padding_sizes5">5dp</dimen>
+    <dimen name="padding_sizes5">3dp</dimen>
 
     <!--text_size-->
 

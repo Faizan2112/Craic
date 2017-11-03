@@ -9,12 +9,15 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -54,15 +57,16 @@ public class DisplayDownloadActivity extends AppCompatActivity implements OnDown
     public static int TYPE_MOBILE = 2;
     public static int TYPE_NOT_CONNECTED = 0;
     private Snackbar snackbar , snackbarlost;
-
+    BottomNavigationView bottomNavigationView;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_download);
         mBroadcastReceiver = new NetworkChangeRecierver();
         recyclerView = (RecyclerView)findViewById(R.id.imagegallery);
         mCoordinatorLayout = (CoordinatorLayout)findViewById(R.id.coordinate_layout);
+      // mCoordinatorLayout.LayoutParams layoutParams ;
         recyclerView.setHasFixedSize(true);
-
+        bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
 
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getApplicationContext(),3);
         recyclerView.setLayoutManager(layoutManager);
@@ -71,14 +75,51 @@ public class DisplayDownloadActivity extends AppCompatActivity implements OnDown
         adapter = new MyAdapter(getApplicationContext(), createLists);
         recyclerView.setAdapter(adapter);
         adapter.setOnDownloadActivity(this);
-       /* GridView gridview = (GridView) findViewById(R.id.gridview);
-        myImageAdapter = new ImageAdapter(this);
-        gridview.setAdapter(myImageAdapter);
 
-        setUpGallery();
-       */
- //isNetConnected = false;
         setUpGridView();
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+
+                    case R.id.main_menu_home:
+                        int conn = getConnectivityStatus(getApplicationContext());
+
+                        if(conn == NetworkUtill.TYPE_WIFI || conn == NetworkUtill.TYPE_MOBILE){
+                            Intent in = new Intent(DisplayDownloadActivity.this, MainActivity.class);
+                            startActivity(in);
+                        finish();
+                        }
+
+                        else{
+                            Toast.makeText(getApplicationContext(),"Please turn on Internet Connection" ,Toast.LENGTH_SHORT).show();
+
+
+                        }
+
+
+
+                        // Toast.makeText(getApplicationContext(), "UploadActivity", Toast.LENGTH_LONG).show();
+                        break;
+                    case R.id.main_menu_suggestion:
+                        Intent is = new Intent(getApplicationContext(), SuggestionActivity.class);
+                        startActivity(is);
+
+
+                       // Toast.makeText(getApplicationContext(), "feed_btm_my_share", Toast.LENGTH_LONG).show();
+                        break;
+                    case R.id.main_menu_upload:
+                        Intent in = new Intent(getApplicationContext(), UploadActivity.class);
+                        startActivity(in);
+                       // finish();
+
+
+                       // Toast.makeText(getApplicationContext(), "UploadActivity", Toast.LENGTH_LONG).show();
+                        break;
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -153,16 +194,26 @@ public class DisplayDownloadActivity extends AppCompatActivity implements OnDown
                     public void onClick(View view) {
                         Intent i = new Intent(getApplicationContext(),MainActivity.class);
                         startActivity(i);
-                        finish();
+                       // finish();
                     }
                 });
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)
+                snackbar.getView().getLayoutParams();
+        params.setMargins(0, 0, 0, bottomNavigationView.getHeight());
+        snackbar.getView().setLayoutParams(params);
+        snackbar.show();
         snackbarlost = Snackbar
-                .make(mCoordinatorLayout, internetStatus, Snackbar.LENGTH_INDEFINITE)
+                .make(mCoordinatorLayout, internetStatus, Snackbar.LENGTH_SHORT)
                 .setAction("x", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         snackbarlost.dismiss();             }
                 });
+        CoordinatorLayout.LayoutParams paramss = (CoordinatorLayout.LayoutParams)
+                snackbarlost.getView().getLayoutParams();
+        paramss.setMargins(0, 0, 0, bottomNavigationView.getHeight());
+        snackbarlost.getView().setLayoutParams(paramss);
+        snackbarlost.show();
         // Changing message text color
         snackbar.setActionTextColor(Color.WHITE);
         // Changing action button text color
@@ -181,35 +232,6 @@ public class DisplayDownloadActivity extends AppCompatActivity implements OnDown
             }
         }
     }
-
-    private void checkStatus() {
-        int conn = NetworkUtill.getConnectivityStatus(this);
-        if (conn == NetworkUtill.TYPE_WIFI || conn == NetworkUtill.TYPE_MOBILE) {
-            Toast.makeText(getApplicationContext(),"net conneced",Toast.LENGTH_LONG);
-          showSnackbar();
-
-        }
-
-    }
-    private void showSnackbar() {
-
-                Snackbar snackbar =Snackbar.make(mCoordinatorLayout,"Goo online",Snackbar.LENGTH_INDEFINITE).setAction("Home", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent i = new Intent(getApplicationContext(),MainActivity.class);
-                        startActivity(i);
-                    }
-                });
-
-            snackbar.setActionTextColor(Color.CYAN);
-               View subView= snackbar.getView();
-                TextView tv = (TextView) subView.findViewById(android.support.design.R.id.snackbar_text);
-                tv.setTextColor(Color.BLUE);
-                snackbar.show();
-                //useVolley();
-            }
-
-
 
 
 
@@ -281,6 +303,71 @@ public class DisplayDownloadActivity extends AppCompatActivity implements OnDown
 
     }
 
+    private ArrayList<CreateList> prepareData(){
+        String ExternalStorageDirectoryPath = Environment
+                .getExternalStorageDirectory()
+                .getAbsolutePath();
+
+        String targetPath = ExternalStorageDirectoryPath + "/Download/craic/";
+
+    //    Toast.makeText(getApplicationContext(), targetPath, Toast.LENGTH_LONG).show();
+        File targetDirector = new File(targetPath);
+        Uri imageUri = Uri.fromFile(targetDirector);
+
+        File[] files = targetDirector.listFiles();
+
+        ArrayList<CreateList> theimage = new ArrayList<>();
+
+  if(files != null) {
+      for (int i = 0; i < files.length; i++) {
+          CreateList createList = new CreateList();
+          //    createList.setImage_title(image_titles[i]);
+          createList.setImage_ID("file:///storage/emulated/0/Download/craic/"+files[i].getName());
+          theimage.add(createList);
+      }
+
+  }else
+      {
+          Toast.makeText(getApplicationContext(),"No image to disply",Toast.LENGTH_LONG).show();
+
+      }
+      return theimage;
+
+  }
+
+    @Override
+    public void onItemClick(View fullScreenImage, CreateList itemPostion) {
+        int id = fullScreenImage.getId();
+   if(!multiSelect){
+        if(id == R.id.img) {
+            String getItemPosition = itemPostion.getImage_ID();
+            String imageName = itemPostion.getImage_title();
+            File fileName = new File(getItemPosition);
+            String fileDetail = fileName.getName();
+            String fileSpace = String.valueOf( fileName.getTotalSpace());
+            String filePath = fileName.getAbsolutePath();
+         //   String fileResolution = fileName
+
+            Intent displayLarge = new Intent(getApplicationContext(),DetailDownloadActivity.class);
+            displayLarge.putExtra("getItemPosition",getItemPosition);
+            displayLarge.putExtra("fileDetail",fileDetail);
+            displayLarge.putExtra("fileSpace", fileSpace);
+            displayLarge.putExtra("filePath",filePath);
+            startActivity(displayLarge);
+            //finish();
+           //  Toast.makeText(getApplicationContext(), "" + getItemPosition, Toast.LENGTH_LONG).show();
+        }
+    }
+}}
+
+  /* GridView gridview = (GridView) findViewById(R.id.gridview);
+        myImageAdapter = new ImageAdapter(this);
+        gridview.setAdapter(myImageAdapter);
+
+        setUpGallery();
+       */
+//isNetConnected = false;
+
 
   /*  private void setUpGallery() {
         String ExternalStorageDirectoryPath = Environment
@@ -301,50 +388,33 @@ public class DisplayDownloadActivity extends AppCompatActivity implements OnDown
 
     }
 */
-    private ArrayList<CreateList> prepareData(){
-        String ExternalStorageDirectoryPath = Environment
-                .getExternalStorageDirectory()
-                .getAbsolutePath();
+    /* private void checkStatus() {
+        int conn = NetworkUtill.getConnectivityStatus(this);
+        if (conn == NetworkUtill.TYPE_WIFI || conn == NetworkUtill.TYPE_MOBILE) {
+          //  Toast.makeText(getApplicationContext(),"net conneced",Toast.LENGTH_LONG);
+          showSnackbar();
 
-        String targetPath = ExternalStorageDirectoryPath + "/Download/craic/";
-
-        Toast.makeText(getApplicationContext(), targetPath, Toast.LENGTH_LONG).show();
-        File targetDirector = new File(targetPath);
-        Uri imageUri = Uri.fromFile(targetDirector);
-
-        File[] files = targetDirector.listFiles();
-
-        ArrayList<CreateList> theimage = new ArrayList<>();
-
-  if(files != null) {
-      for (int i = 0; i < files.length; i++) {
-          CreateList createList = new CreateList();
-          //    createList.setImage_title(image_titles[i]);
-          createList.setImage_ID("file:///storage/emulated/0/Download/craic/"+files[i].getName());
-          theimage.add(createList);
-      }
-
-  }else
-      {
-          Toast.makeText(getApplicationContext(),"No imge to disply",Toast.LENGTH_LONG).show();
-
-      }
-      return theimage;
-
-  }
-
-    @Override
-    public void onItemClick(View fullScreenImage, CreateList itemPostion) {
-        int id = fullScreenImage.getId();
-   if(!multiSelect){
-        if(id == R.id.img) {
-            String getItemPosition = itemPostion.getImage_ID();
-            Intent displayLarge = new Intent(getApplicationContext(),DetailDownloadActivity.class);
-            displayLarge.putExtra("fileImage",getItemPosition);
-            displayLarge.putExtra("callFromDownload", 2);
-            startActivity(displayLarge);
-            //finish();
-             Toast.makeText(getApplicationContext(), "" + getItemPosition, Toast.LENGTH_LONG).show();
         }
+
     }
-}}
+    private void showSnackbar() {
+
+                Snackbar snackbar =Snackbar.make(mCoordinatorLayout,"Goo online",Snackbar.LENGTH_INDEFINITE).setAction("Home", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(getApplicationContext(),MainActivity.class);
+                        startActivity(i);
+                    }
+                });
+
+            snackbar.setActionTextColor(Color.CYAN);
+               View subView= snackbar.getView();
+                TextView tv = (TextView) subView.findViewById(android.support.design.R.id.snackbar_text);
+                tv.setTextColor(Color.BLUE);
+                snackbar.show();
+                //useVolley();
+            }
+
+
+*/
+

@@ -25,6 +25,11 @@ public class Config {
     public static final String UPDATELIKE_URL ="https://faizandream21.000webhostapp.com/PhotoUploadWithText/updatelike.php";
     public static final String UPDATEUNLIKE_URL ="https://faizandream21.000webhostapp.com/PhotoUploadWithText/updateunlike.php";
     public static final String SUGGESTION_URL ="https://faizandream21.000webhostapp.com/PhotoUploadWithText/suggestion.php";
+    public static final String REGISTER_URL ="http://faizandream21.000webhostapp.com/PhotoUploadWithText/include/RegisterUser.php";
+    public static final String LOGIN_URL ="http://faizandream21.000webhostapp.com/PhotoUploadWithText/include/Login.php";
+    public static final String FORGOT_PASS_URL ="https://faizandream21.000webhostapp.com/PhotoUploadWithText/suggestion.php";
+
+
     public static final String TAG_IMAGE_URL = "url";
     public static final String TAG_IMAGE_NAME = "name";
     public static final String TAG_JSON_ARRAY="result";

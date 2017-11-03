@@ -66,8 +66,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(MyAdapter.ViewHolder viewHolder, int i) {
         final CreateList object = galleryList.get(i);
+        String il = galleryList.get(i).getImage_ID();
         Glide.with(context).load(Uri.parse(galleryList.get(i).getImage_ID())).placeholder(R.drawable.placeholder).dontAnimate().fitCenter().into(viewHolder.img);
-        viewHolder.update(i);
+      //  viewHolder.update(i);
 
         View.OnClickListener imageGridTypeListener = new View.OnClickListener() {
             @Override

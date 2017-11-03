@@ -12,7 +12,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.dreamworld.craic.R;
@@ -22,12 +21,10 @@ import com.dreamworld.craic.transformshape.CircleTransform;
 import com.dreamworld.craic.interfaces.OnHomeImageViewClick;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-import static com.dreamworld.craic.MainActivity.imagePos;
 import static com.dreamworld.craic.MainActivity.saveLikeid;
 
 /**
@@ -67,7 +64,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             super(itemView);
 
             this.mMaintext = (TextView) itemView.findViewById(R.id.home_main_text);
-            this.textLinearlayout = (LinearLayout) itemView.findViewById(R.id.home_main_text_type);
+         //   this.textLinearlayout = (LinearLayout) itemView.findViewById(R.id.home_main_text_type);
             this.mSharetext = (ImageView) itemView.findViewById(R.id.home_share_text);
             this.mListentext = (ImageView) itemView.findViewById(R.id.home_listen_text);
             this.mHeadImage = (ImageView) itemView.findViewById(R.id.home_text_head_image);
@@ -99,7 +96,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             this.mMainImage = (ImageView) itemView.findViewById(R.id.home_main_image);
             this.mHeadImage = (ImageView) itemView.findViewById(R.id.home_head_image);
             this.mDownloadButton = (ImageView) itemView.findViewById(R.id.home_main_downloadImage);
-            this.mShareImage = (ImageView) itemView.findViewById(R.id.home_image_share);
+            this.mShareImage = (ImageView) itemView.findViewById(R.id.home_gif_share);
             this.mLikeImage = (ImageView) itemView.findViewById(R.id.home_image_like);
             this.mUnlike = (ImageView) itemView.findViewById(R.id.home_image_unlike);
             this.mLikes = (TextView) itemView.findViewById(R.id.home_likes);
@@ -148,11 +145,11 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             super(itemView);
 
             this.txtType = (TextView) itemView.findViewById(R.id.type);
-            this.mGifImage = (ImageView) itemView.findViewById(R.id.home_main_gif_image);
+            this.mGifImage = (ImageView) itemView.findViewById(R.id.home_main_image);
             this.mGifHeadImage = (ImageView) itemView.findViewById(R.id.home_gif_head_image);
-            this.mDownloadGif = (ImageView) itemView.findViewById(R.id.home_download_gif);
-            this.mShareGif = (ImageView) itemView.findViewById(R.id.home_share_gif);
-            this.fab = (FloatingActionButton) itemView.findViewById(R.id.fab);
+            this.mDownloadGif = (ImageView) itemView.findViewById(R.id.home_main_downloadImage);
+            this.mShareGif = (ImageView) itemView.findViewById(R.id.home_gif_share);
+           // this.fab = (FloatingActionButton) itemView.findViewById(R.id.fab);
             this.mLikes = (TextView) itemView.findViewById(R.id.home_likes);
             this.mDate = (TextView) itemView.findViewById(R.id.home_date);
             this.mHeadText = (TextView) itemView.findViewById(R.id.home_head_text);
@@ -308,6 +305,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     ((GifTypeViewHolder) holder).mShareGif.setOnClickListener(gifTypeListener);
                     ((GifTypeViewHolder) holder).mLikeImage.setOnClickListener(gifTypeListener);
                     ((GifTypeViewHolder) holder).mUnlike.setOnClickListener(gifTypeListener);
+                    ((GifTypeViewHolder) holder).mGifImage.setOnClickListener(gifTypeListener);
 
 
 

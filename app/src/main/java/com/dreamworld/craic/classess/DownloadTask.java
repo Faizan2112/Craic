@@ -37,7 +37,7 @@ public  class DownloadTask extends AsyncTask<String, Integer, String> {
         mPDialog.setMessage(dialogMessage);
         mPDialog.setIndeterminate(true);
         mPDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        mPDialog.setCancelable(true);
+        mPDialog.setCancelable(false);
         // reference to instance to use inside listener
         final DownloadTask me = this;
         mPDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {

@@ -18,8 +18,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
+            android:weightSum="1"
 
-            android:weightSum="1">
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -50,11 +51,9 @@
                     android:layout_weight=".6"
                     android:gravity="center"
                     android:text="demotext"
-
-                    android:textStyle="bold"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="@dimen/text_size22"
-                    />
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/home_date"
@@ -64,36 +63,34 @@
                     android:layout_weight=".25"
                     android:gravity="center"
                     android:text="date / time"
-                    android:textSize="@dimen/text_size14"
                     android:textColor="@color/colorPrimaryDark"
-                    />
+                    android:textSize="@dimen/text_size14" />
             </LinearLayout>
-            <!-- android:scaleType="matrix"
-            FOR SCALING IMAGE
-            -->
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight=".7">
 
-
                 <ImageView
-                    android:id="@+id/home_main_gif_image"
+                    android:id="@+id/home_main_image"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY" />
+                <!-- android:scaleType="matrix"
+                FOR SCALING IMAGE
+                -->
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_margin="@dimen/activity_horizontal_margin"
+
                 android:layout_weight=".1"
                 android:orientation="horizontal"
-
-                android:weightSum="1"
-
-                >
-
+                android:weightSum="1">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -104,7 +101,7 @@
                     android:weightSum="1">
                     <TextView
                         android:layout_width="0dp"
-                        android:layout_height="28dp"
+                        android:layout_height="match_parent"
                         android:layout_weight=".33"
                         android:gravity="center"
 
@@ -121,10 +118,11 @@
                         <TextView
                             android:id="@+id/home_likes"
                             android:layout_width="match_parent"
-                            android:layout_height="28dp"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/bottombutton"
                             android:gravity="center"
                             android:text="5"
-                            android:background="@drawable/bottombutton"
+                            android:textSize="@dimen/text_size12"
 
                             />
 
@@ -136,13 +134,13 @@
 
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight=".4">
+                    android:layout_weight=".3">
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight=".3">
+                    android:layout_weight=".4">
 
                     <android.support.v7.widget.CardView
                         android:layout_width="match_parent"
@@ -157,10 +155,7 @@
                             android:layout_height="match_parent"
                             android:background="@drawable/bottombutton"
                             android:padding="5dp"
-                            android:weightSum="1"
-
-
-                            >
+                            android:weightSum="1">
                             <!-- <ImageView
                                  android:layout_width="0dp"
                                  android:layout_height="match_parent"
@@ -170,45 +165,68 @@
 
                                  />
 -->
-
-                            <ImageView
-                                android:id="@+id/home_share_gif"
+                            <Space
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
-                                android:layout_weight="0.34"
+                                android:layout_weight=".08" />
 
+                            <ImageView
+                                android:id="@+id/home_gif_share"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight=".25"
                                 android:background="@drawable/share46"
 
 
                                 />
-
-                            <ImageView
-                                android:id="@+id/home_download_gif"
+                            <Space
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
-                                android:layout_weight=".33"
+                                android:layout_weight=".05" />
+
+                            <ImageView
+                                android:id="@+id/home_main_downloadImage"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight=".25"
                                 android:background="@drawable/down46"
                                 android:gravity="center"
 
                                 />
+
+                            <Space
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight=".05" />
+
                             <ImageView
                                 android:id="@+id/home_image_like"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
-                                android:layout_weight=".33"
+                                android:layout_weight=".25"
                                 android:background="@drawable/like"
                                 android:gravity="center"
                                 android:visibility="visible" />
+
                             <ImageView
                                 android:id="@+id/home_image_unlike"
                                 android:layout_width="0dp"
                                 android:layout_height="match_parent"
-                                android:layout_weight=".33"
-                                android:background="@drawable/share"
+                                android:layout_weight=".27"
+                                android:background="@drawable/unlike"
                                 android:gravity="center"
                                 android:visibility="invisible" />
 
+                            <!--/>-->
 
+                            <!--<ImageView-->
+                            <!--android:id="@+id/imageView2"-->
+                            <!--android:layout_width="0dp"-->
+                            <!--android:layout_height="match_parent"-->
+                            <!--android:layout_weight=".19"-->
+                            <!--android:background="@drawable/ic_mood_black_24dp"-->
+
+                            <!--android:gravity="center" />-->
                         </LinearLayout>
                     </android.support.v7.widget.CardView>
                 </LinearLayout>
@@ -222,10 +240,7 @@
 
 </LinearLayout>
 
-
-    <!--
-    <?xml version="1.0" encoding="utf-8"?>
-    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    <!--<android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/card_view"
         android:layout_width="match_parent"
@@ -254,7 +269,8 @@
                 />
 
         </LinearLayout>
+        </android.support.v7.widget.CardView>
 
-    </android.support.v7.widget.CardView>
+        -->
 
-    -->
+

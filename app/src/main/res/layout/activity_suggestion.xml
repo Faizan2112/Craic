@@ -22,57 +22,60 @@ android:orientation="vertical"
         android:weightSum="1">
 
         <ImageButton
+            android:id="@+id/imageButton"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight=".08"
-            android:background="@drawable/suggname"
 
-            />
-        <Space
+            android:background="@drawable/suggname" />
+      <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".04" />
+            android:layout_weight=".02" />
+
+        <!--<Space-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight=".03" />-->
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".13"
-           >
+            android:layout_weight=".3">
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/login_til_email"
+                android:id="@+id/suggestions_nameti"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/colorPrimaryDark"
-                >
+                android:layout_height="wrap_content"
+
+                android:background="@color/colorPrimaryDark">
 
                 <EditText
-                    android:id="@+id/login_email_et"
+                    android:id="@+id/suggestions_name"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
-                    android:textColorHighlight="#000"
+
+                    android:textColor="#f2e9e9"
                     android:textStyle="bold"
 
                     />
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight=".04" />
+
         <ImageButton
+
+            android:id="@+id/imageButton2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".08"
-            android:background="@drawable/suggestionsugg"
 
-            />
+            android:layout_weight=".08"
+            android:background="@drawable/suggestionsugg" />
+
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".04" />
-
+            android:layout_weight=".02" />
 
 
         <LinearLayout
@@ -83,26 +86,30 @@ android:orientation="vertical"
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/suggestions_suggti"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:background="@color/colorPrimaryDark">
 
                 <EditText
                     android:id="@+id/suggestions_sugg"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/activity_vertical_margin"
 
-                    android:textColorHighlight="#000"
+                    android:textColor="#f2e9e9"
                     android:textStyle="bold"
 
                     />
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight=".09" />
+
+        <!-- <Button
+             android:layout_width="match_parent"
+             android:layout_height="0dp"
+             android:layout_weight=".15"
+             android:background="@drawable/suugsend" />
+ -->
         <ImageButton
+            android:id="@+id/suggestions_send"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight=".15"
@@ -112,3 +119,8 @@ android:orientation="vertical"
 
 
 </LinearLayout>
+
+    <!--  <Space
+              android:layout_width="match_parent"
+              android:layout_height="0dp"
+              android:layout_weight=".09" />-->

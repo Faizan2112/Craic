@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:title="Upload"
+        android:id="@+id/main_menu_upload"
+        android:enabled="true"
+        android:icon="@drawable/upload56"
+        app:showAsAction="ifRoom" />
+    <item
+        android:title="Suggestion"
+        android:id="@+id/main_menu_suggestion"
+        android:enabled="true"
+        android:icon="@drawable/sugg24"
+        app:showAsAction="ifRoom" />
+    <item
+        android:title="Home"
+        android:icon="@drawable/home"
+        android:id="@+id/main_menu_home"
+        android:enabled="true"
+        app:showAsAction="ifRoom" />
+
+</menu>
