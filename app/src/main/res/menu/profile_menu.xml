@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:title="About"
+        android:id="@+id/profile_menu_about"
+        android:enabled="true"
+        android:icon="@drawable/upload56"
+        app:showAsAction="ifRoom" />
+    <item
+        android:title="Logout"
+        android:id="@+id/profile_menu_logout"
+        android:enabled="true"
+        android:icon="@drawable/sugg24"
+        app:showAsAction="ifRoom" />
+
+</menu>

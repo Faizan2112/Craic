@@ -332,7 +332,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     private void changeDataSet(int pos, RecyclerView.ViewHolder holder) {
         int findImagePostion = dataSet.get(pos).getImageId();
-
+if(saveLikeid != null){
         for (int i = 0; i < saveLikeid.size(); i++) {
             //saveLikeid.contains(findImagePostion);
 
@@ -392,7 +392,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
 
             }
-        }
+        }}
     }
 
     @Override

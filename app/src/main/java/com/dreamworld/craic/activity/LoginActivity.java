@@ -21,6 +21,11 @@ import com.android.volley.toolbox.Volley;
 import com.dreamworld.craic.MainActivity;
 import com.dreamworld.craic.R;
 import com.dreamworld.craic.configuration.Config;
+import com.dreamworld.craic.configuration.Constants;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,8 +37,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     TextView mForgotPass;
     private String email;
     private String password;
-    private static SharedPreferences savedeatail;
-    private static boolean loggedin = false;
+    public static SharedPreferences savedeatail;
+    public  static boolean loggedin = false;
 
 
     @Override
@@ -46,13 +51,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void checkSharePreference() {
 
-        savedeatail= getSharedPreferences("loginData" ,MODE_PRIVATE);
-         String shareEmail = savedeatail.getString("email",email);
-        boolean islogin = savedeatail.getBoolean("isLoggedIn",loggedin);
+        savedeatail= getSharedPreferences(Constants.LoginSharePreferenceName,MODE_PRIVATE);
+         String shareEmail = savedeatail.getString(Constants.LoginSharePreferenceEmail,email);
+        boolean islogin = savedeatail.getBoolean(Constants.LoginSharePreferenceLogValue,loggedin);
         if(islogin)
         {
-            Intent gotoMain = new Intent(getApplicationContext(), MainActivity.class);
-            gotoMain.putExtra("email",shareEmail);
+            Intent gotoMain = new Intent(getApplicationContext(), HomeActivity.class);
+            gotoMain.putExtra(Constants.LoginSharePreferenceEmail,shareEmail);
             startActivity(gotoMain);
             finish();
 
@@ -109,7 +114,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onResponse(String response) {
                 Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
-                storeDetails(response);
+                try {
+                    storeDetails(response);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
             }
         }, new Response.ErrorListener() {
@@ -135,17 +144,31 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         sendLdata.add(loginUser);
     }
 
-    private void storeDetails(String response) {
-    if(response.equals("success"))
+    private void storeDetails(String response) throws JSONException {
+        JSONObject loginData = new JSONObject(response);
+        JSONArray loginArray = loginData.getJSONArray("result");
+        JSONObject getlog = loginArray.getJSONObject(0);
+        String mEmail = getlog.getString(Constants.LoginSharePreferenceemailkey);
+        int mVerified = getlog.getInt(Constants.keyverified);
+        String mFriendlist = getlog.getString(Constants.keyfriendlist);
+        String mLikeList =getlog.getString(Constants.keylikelist);
+        String mPosts   =getlog.getString(Constants.keyposts);
+        String mStatus = getlog.getString(Constants.keystatus);
+        //      mEmail = loginArray.getJSONObject(0);
+    if(mStatus.equals(Constants.keyresult))
     {
         loggedin = true ;
-        savedeatail = getSharedPreferences("loginData" ,MODE_PRIVATE);
+        savedeatail = getSharedPreferences(Constants.LoginSharePreferenceName ,MODE_PRIVATE);
         SharedPreferences.Editor editlogin = savedeatail.edit();
-        editlogin.putString("email",email);
-        editlogin.putBoolean("isLoggedIn",loggedin);
+        editlogin.putString(Constants.LoginSharePreferenceEmail,mEmail);
+        editlogin.putInt(Constants.LoginSharePreferenceverified,mVerified);
+        editlogin.putString(Constants.LoginSharePreferencefriendlist,mFriendlist);
+        editlogin.putString(Constants.LoginSharePreferencelikelist,mLikeList);
+        editlogin.putString(Constants.LoginSharePreferenceposts,mPosts);
+        editlogin.putBoolean(Constants.LoginSharePreferenceLogValue,loggedin);
         editlogin.commit();
 
-        Intent gotoMain = new Intent(getApplicationContext(), MainActivity.class);
+        Intent gotoMain = new Intent(getApplicationContext(), HomeActivity.class);
      //   gotoMain.putExtra("email",shareEmail);
         startActivity(gotoMain);
         finish();

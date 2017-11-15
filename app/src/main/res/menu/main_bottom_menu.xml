@@ -15,10 +15,15 @@
         android:icon="@drawable/sugg24"
         app:showAsAction="ifRoom" />
     <item
-        android:title="Download"
+    android:title="Download"
+    android:icon="@drawable/downlod24"
+    android:id="@+id/main_menu_dowload"
+    android:enabled="true"
+    app:showAsAction="ifRoom" />
+    <item
+        android:title="Profile"
         android:icon="@drawable/downlod24"
-        android:id="@+id/main_menu_dowload"
+        android:id="@+id/main_menu_profile"
         android:enabled="true"
         app:showAsAction="ifRoom" />
-
 </menu>
