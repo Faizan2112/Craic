@@ -24,7 +24,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dreamworld.craic.MainActivity;
+
 import com.dreamworld.craic.R;
 import com.dreamworld.craic.adapters.MyAdapter;
 import com.dreamworld.craic.broadcastreciever.NetworkChangeRecierver;
@@ -35,8 +35,6 @@ import com.dreamworld.craic.networkcheck.NetworkUtill;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.dreamworld.craic.MainActivity.isNetConnected;
 import static com.dreamworld.craic.adapters.MyAdapter.multiSelect;
 import static com.dreamworld.craic.networkcheck.NetworkUtill.TYPE_NOT_CONNECTED;
 import static com.dreamworld.craic.networkcheck.NetworkUtill.getConnectivityStatusString;
@@ -86,7 +84,7 @@ public class DisplayDownloadActivity extends AppCompatActivity implements OnDown
                         int conn = getConnectivityStatus(getApplicationContext());
 
                         if(conn == NetworkUtill.TYPE_WIFI || conn == NetworkUtill.TYPE_MOBILE){
-                            Intent in = new Intent(DisplayDownloadActivity.this, MainActivity.class);
+                            Intent in = new Intent(DisplayDownloadActivity.this, HomeActivity.class);
                             startActivity(in);
                         finish();
                         }
@@ -192,7 +190,7 @@ public class DisplayDownloadActivity extends AppCompatActivity implements OnDown
                 .setAction("Home", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent i = new Intent(getApplicationContext(),MainActivity.class);
+                        Intent i = new Intent(getApplicationContext(),HomeActivity.class);
                         startActivity(i);
                        // finish();
                     }
@@ -402,7 +400,7 @@ public class DisplayDownloadActivity extends AppCompatActivity implements OnDown
                 Snackbar snackbar =Snackbar.make(mCoordinatorLayout,"Goo online",Snackbar.LENGTH_INDEFINITE).setAction("Home", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent i = new Intent(getApplicationContext(),MainActivity.class);
+                        Intent i = new Intent(getApplicationContext(),HomeActivity.class);
                         startActivity(i);
                     }
                 });

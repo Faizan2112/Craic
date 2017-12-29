@@ -5,6 +5,10 @@ package com.dreamworld.craic.model;
  */
 
 public class PostDetail {
+    public static final int TEXT_TYPE = 0;
+    public static final int IMAGE_TYPE = 1;
+    public static final int AUDIO_TYPE = 2;
+
     public String getPosts() {
         return posts;
     }
@@ -37,11 +41,11 @@ public class PostDetail {
         this.titel = titel;
     }
 
-    public int getPost_id() {
+    public String getPost_id() {
         return post_id;
     }
 
-    public void setPost_id(int post_id) {
+    public void setPost_id(String post_id) {
         this.post_id = post_id;
     }
 
@@ -85,19 +89,19 @@ public class PostDetail {
         this.articleconclution = articleconclution;
     }
 
-    public String getLikes() {
+    public int getLikes() {
         return likes;
     }
 
-    public void setLikes(String likes) {
+    public void setLikes(int likes) {
         this.likes = likes;
     }
 
-    public String getComments() {
+    public int getComments() {
         return comments;
     }
 
-    public void setComments(String comments) {
+    public void setComments(int comments) {
         this.comments = comments;
     }
 
@@ -121,14 +125,14 @@ public class PostDetail {
     private String post_icon ;
     private String date ;
     private String titel ;
-    private int post_id ;
+    private String post_id ;
     private String subtitle ;
     private String mainimageurl ;
     private String articlesummary ;
     private String articledescription ;
     private String articleconclution ;
-    private String likes ;
-    private String comments ;
+    private int likes ;
+    private int comments ;
     private int viewtype ;
     private int privacy ;
 }

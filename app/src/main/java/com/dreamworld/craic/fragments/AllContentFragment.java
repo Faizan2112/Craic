@@ -35,17 +35,21 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.dreamworld.craic.MainActivity;
+
 import com.dreamworld.craic.R;
+import com.dreamworld.craic.activity.CommentActivity;
 import com.dreamworld.craic.activity.DetailContentActivity;
 import com.dreamworld.craic.activity.DisplayDownloadActivity;
-import com.dreamworld.craic.adapters.MultiViewAdapter;
+import com.dreamworld.craic.adapters.PostDataAdapter;
 import com.dreamworld.craic.broadcastreciever.NetworkChangeRecierver;
 import com.dreamworld.craic.classess.DividerItemDecoration;
 import com.dreamworld.craic.classess.DownloadTask;
 import com.dreamworld.craic.configuration.Config;
+import com.dreamworld.craic.configuration.Constants;
+import com.dreamworld.craic.configuration.PostDataConfig;
 import com.dreamworld.craic.interfaces.OnHomeImageViewClick;
 import com.dreamworld.craic.model.Model;
+import com.dreamworld.craic.model.PostDetail;
 import com.dreamworld.craic.networkcheck.NetworkUtill;
 
 import org.json.JSONArray;
@@ -61,21 +65,26 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import static com.dreamworld.craic.MainActivity.deleteLikeid;
-import static com.dreamworld.craic.MainActivity.saveLikeid;
 import static com.dreamworld.craic.R.id.recyclerView;
 import static com.dreamworld.craic.activity.HomeActivity.isNetConnected;
 import static com.dreamworld.craic.configuration.Config.SHARED_PREF_NAME;
 import static com.dreamworld.craic.configuration.Config.UPDATELIKE_URL;
 import static com.dreamworld.craic.configuration.Config.UPDATEUNLIKE_URL;
-import static com.dreamworld.craic.configuration.Config.currentImage;
-import static com.dreamworld.craic.configuration.Config.date;
-import static com.dreamworld.craic.configuration.Config.headImage;
-import static com.dreamworld.craic.configuration.Config.headTitel;
-import static com.dreamworld.craic.configuration.Config.likes;
 import static com.dreamworld.craic.configuration.Config.names;
 import static com.dreamworld.craic.configuration.Config.urls;
-import static com.dreamworld.craic.configuration.Config.viewtype;
+import static com.dreamworld.craic.configuration.PostDataConfig.viewtype;
+import static com.dreamworld.craic.configuration.PostDataConfig.articleconclution;
+import static com.dreamworld.craic.configuration.PostDataConfig.articledescription;
+import static com.dreamworld.craic.configuration.PostDataConfig.articlesummary;
+import static com.dreamworld.craic.configuration.PostDataConfig.comments;
+import static com.dreamworld.craic.configuration.PostDataConfig.date;
+import static com.dreamworld.craic.configuration.PostDataConfig.likes;
+import static com.dreamworld.craic.configuration.PostDataConfig.mainimageurl;
+import static com.dreamworld.craic.configuration.PostDataConfig.post_icon;
+import static com.dreamworld.craic.configuration.PostDataConfig.post_id;
+import static com.dreamworld.craic.configuration.PostDataConfig.posts;
+import static com.dreamworld.craic.configuration.PostDataConfig.subtitle;
+import static com.dreamworld.craic.configuration.PostDataConfig.titel;
 
 
 /**
@@ -97,6 +106,7 @@ public class AllContentFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private Config mConfigFile;
     private int conn;
+    private PostDataConfig mPostDataConfig;
 
     public AllContentFragment() {
         // Required empty public constructor
@@ -106,12 +116,22 @@ public class AllContentFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mBroadcastReceiver = new NetworkChangeRecierver();
+
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_all_content, container, false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), OrientationHelper.VERTICAL, false);
+     //   LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), OrientationHelper.VERTICAL, false);
+
+        mRecyclerView = (RecyclerView) v.findViewById(R.id.home_all_content);
+
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity()));
+
         initializeView(v);
         retriveSharedKey();
         verifyStoragePermissions(this);
@@ -217,8 +237,6 @@ public class AllContentFragment extends Fragment {
 
 
     private void initializeView(View v) {
-        mRecyclerView = (RecyclerView) v.findViewById(recyclerView);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), OrientationHelper.VERTICAL, false);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.main_swipe_refresh);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -227,19 +245,16 @@ public class AllContentFragment extends Fragment {
                 useVolley();
             }
         });
-        mRecyclerView.setLayoutManager(linearLayoutManager);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity()));
 
     }
 
     private void useVolley() {
-        StringRequest sr = new StringRequest(Request.Method.GET, Config.GET_URL, new Response.Listener<String>() {
+        StringRequest sr = new StringRequest(Request.Method.GET, Constants.GET_All_Post_URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 parseJson(response);
-                //  Toast.makeText(getApplicationContext(), "" + response, Toast.LENGTH_LONG).show();
+                 // Toast.makeText(getActivity().getApplicationContext(), "" + response, Toast.LENGTH_LONG).show();
 
             }
         }, new Response.ErrorListener() {
@@ -260,52 +275,66 @@ public class AllContentFragment extends Fragment {
             JSONObject jsonObject = new JSONObject(response);
             JSONArray array = jsonObject.getJSONArray(Config.TAG_JSON_ARRAY);
 
-            mConfigFile = new Config(array.length());
-
+           // mConfigFile = new Config(array.length());
+            mPostDataConfig = new PostDataConfig(array.length());
             for (int i = 0; i < array.length(); i++) {
                 JSONObject fetchedData = array.getJSONObject(i);
-                viewtype[i] = getViewType(fetchedData);
-                names[i] = getName(fetchedData);
-                urls[i] = getURL(fetchedData);
-                currentImage[i] = getImageId(fetchedData);
-                headImage[i] = getHeadImage(fetchedData);
+              posts[i] = getPosts(fetchedData);
+                post_icon[i] = getPost_icon(fetchedData);
                 date[i] = getDate(fetchedData);
-                likes[i] = getLikes(fetchedData);
-                headTitel[i] = getHeadTitel(fetchedData) ;
+              titel[i] = getTitel(fetchedData);
+               post_id[i] = getPost_id(fetchedData);
+                subtitle[i] = getSubtitle(fetchedData);
+                mainimageurl[i] = getMainimageurl(fetchedData);
+                articlesummary[i] = getArticlesummary(fetchedData) ;
+                articledescription[i] = getarticleDescription(fetchedData) ;
+                articleconclution[i] = getArticleconclution(fetchedData) ;
+                likes[i] = getLikes(fetchedData) ;
+               comments[i] = getComments(fetchedData) ;
+               viewtype[i] = getViewType(fetchedData) ;
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        ArrayList<Model> models = new ArrayList<>();
-        for (int i = 0; i < urls.length; i++) {
-            Model m = new Model();
-            m.setName(names[i]);
-            m.setUrl(urls[i]);
-            m.setType(viewtype[i]);
-            m.setImageId(currentImage[i]);
-            m.setHeadImage(headImage[i]);
-            m.setHeadTitel(headTitel[i]);
+       ArrayList<PostDetail> postModel = new ArrayList<PostDetail>();
+        for (int i = 0; i < posts.length; i++) {
+            //Model m = new Model();
+           PostDetail m = new PostDetail();
+            m.setPosts(posts[i]);
+            m.setPost_icon(post_icon[i]);
             m.setDate(date[i]);
+            m.setTitel(titel[i]);
+            m.setPost_id(post_id[i]);
+            m.setSubtitle(subtitle[i]);
+            m.setMainimageurl(mainimageurl[i]);
+            m.setArticlesummary(articlesummary[i]);
+            m.setArticledescription(articledescription[i]);
+            m.setArticleconclution(articleconclution[i]);
             m.setLikes(likes[i]);
-            models.add(m);
+            m.setComments(comments[i]);
+            m.setViewtype(viewtype[i]);
+
+
+            postModel.add(m);
 
         }
-        MultiViewAdapter adapter = new MultiViewAdapter(models, getActivity());
+        PostDataAdapter adapter = new PostDataAdapter(postModel, getActivity());
         mRecyclerView.setAdapter(adapter);
         adapter.setOnHomeImageViewClick(new OnHomeImageViewClick() {
 
 
             @Override
-            public void onItemClick(RecyclerView.ViewHolder ho, View fullScreenImage, Model itemPostion) {
+            public void onItemClick(RecyclerView.ViewHolder ho, View fullScreenImage, PostDetail itemPostion) {
 
                 final int randomNo = new Random().nextInt(61) + 20;
                 //  int listenerType = itemPostion.getType();
                 int adapterIds = fullScreenImage.getId();
-                String getItemPosition = itemPostion.getUrl();
-                String getName = itemPostion.getName();
-                int getModelType = itemPostion.getType();
+                String getItemPosition = itemPostion.getMainimageurl();
+                String getName = itemPostion.getTitel();
+                int getModelType = itemPostion.getViewtype();
+                 String postId = itemPostion.getPost_id();
 
                 switch (adapterIds) {
                     case R.id.home_main_downloadImage:
@@ -318,7 +347,7 @@ public class AllContentFragment extends Fragment {
                             File wallpaperDirectory = new File("/sdcard/Download/craic/", name_);
                             wallpaperDirectory.getParentFile().mkdirs();
                         }
-                        new DownloadTask(getActivity(), direct, "downloading").execute(itemPostion.getUrl());
+                        new DownloadTask(getActivity(), direct, "downloading").execute(itemPostion.getMainimageurl());
 
                         //  }
 
@@ -329,8 +358,8 @@ public class AllContentFragment extends Fragment {
 
                         //
 
-                        String imageUrl = itemPostion.getUrl();
-                        String imageName = itemPostion.getHeadTitel();
+                        String imageUrl = itemPostion.getMainimageurl();
+                        String imageName = itemPostion.getTitel();
 
                         Intent sendImage = new Intent(getActivity(), DetailContentActivity.class);
                         //  sendImage.putExtra(imageUrl, "detailImageUrl");
@@ -345,17 +374,21 @@ public class AllContentFragment extends Fragment {
                     break;
                     case R.id.home_image_like:
 
-                        String imageId =  String.valueOf(itemPostion.getImageId());
+                        String imageId =  String.valueOf(itemPostion.getPost_id());
                         //      Toast.makeText(getApplicationContext(), "" + imageId, Toast.LENGTH_LONG).show();
                         int conn2 = NetworkUtill.getConnectivityStatus(getActivity().getApplicationContext());
                         if(conn2 == NetworkUtill.TYPE_WIFI || conn2 == NetworkUtill.TYPE_MOBILE) {
-                            updateLike(ho, itemPostion);
+                        //    updateLike(ho, itemPostion);
                         }else
                         {
                             Toast.makeText(getActivity().getApplicationContext(),"Please turn on Internet Connection" ,Toast.LENGTH_SHORT).show();
 
                         }
 
+                        break;
+                    case R.id.home_comment:
+                        startCommentActivity(postId);
+                        
                         break;
 
                     case R.id.home_image_unlike:
@@ -364,7 +397,7 @@ public class AllContentFragment extends Fragment {
 
                         int conn3 = NetworkUtill.getConnectivityStatus(getActivity().getApplicationContext());
                         if(conn3 == NetworkUtill.TYPE_WIFI || conn3 == NetworkUtill.TYPE_MOBILE) {
-                            updateunlike(ho,itemPostion);
+                      //      updateunlike(ho,itemPostion);
                         }else
                         {
                             Toast.makeText(getActivity().getApplicationContext(),"Please turn on Internet Connection" ,Toast.LENGTH_SHORT).show();
@@ -413,13 +446,13 @@ public class AllContentFragment extends Fragment {
 //                        }
 //                        break;
 
-                    case R.id.home_listen_text:
+                    //case R.id.home_listen_text:
 
                        // speakOut(getName);
 
-                        break;
+                        //break;
 
-                    case R.id.home_share_text:
+                    case R.id.home_share:
                         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                         sharingIntent.setType("text/plain");
                         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject Here");
@@ -437,7 +470,16 @@ public class AllContentFragment extends Fragment {
 
 
     }
-    private void updateunlike(final RecyclerView.ViewHolder ho, final Model itemPostion) {
+
+    private void startCommentActivity(String id) {
+        Intent commentActivity = new Intent(getContext(), CommentActivity.class);
+        commentActivity.putExtra("postid",id);
+        startActivity(commentActivity);
+
+    }
+
+
+    private void updateunlike(final RecyclerView.ViewHolder ho, final PostDetail itemPostion) {
 
         StringRequest updateunLike = new StringRequest(Request.Method.POST, UPDATEUNLIKE_URL, new Response.Listener<String>() {
             @Override
@@ -455,7 +497,7 @@ public class AllContentFragment extends Fragment {
         }){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                String imageId =  String.valueOf(itemPostion.getImageId());
+                String imageId =  String.valueOf(itemPostion.getPost_id());
                 Map<String, String> params = new HashMap<>();
                 //Adding parameters to request
                 params.put("id",imageId );
@@ -476,7 +518,7 @@ public class AllContentFragment extends Fragment {
             {
                 ImageView showlike = (ImageView) ho.itemView.findViewById(R.id.home_image_like);
                 showlike.setVisibility(View.VISIBLE);
-                boolean del = saveLikeid.remove(String.valueOf(itemPostion.getImageId()));
+                boolean del = saveLikeid.remove(String.valueOf(itemPostion.getPost_id()));
                 if(del) {
 
                     addImageId = getActivity().getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
@@ -518,7 +560,7 @@ public class AllContentFragment extends Fragment {
 
     }
 
-    private void updateLike(final RecyclerView.ViewHolder ho, final Model itemPostion) {
+    private void updateLike(final RecyclerView.ViewHolder ho, final PostDetail itemPostion) {
         // saveLikeid ;
         StringRequest updateLike = new StringRequest(Request.Method.POST, UPDATELIKE_URL, new Response.Listener<String>() {
             @Override
@@ -537,7 +579,7 @@ public class AllContentFragment extends Fragment {
         }){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                String imageId =  String.valueOf(itemPostion.getImageId());
+                String imageId =  String.valueOf(itemPostion.getPost_id());
                 Map<String, String> params = new HashMap<>();
                 //Adding parameters to request
                 params.put("id",imageId );
@@ -564,7 +606,7 @@ public class AllContentFragment extends Fragment {
                     saveLikeid = new HashSet<>();
 
                 }
-                saveLikeid.add(String.valueOf(itemPostion.getImageId()));
+                saveLikeid.add(String.valueOf(itemPostion.getPost_id()));
 
                 addImageId = getActivity().getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor= addImageId.edit();
@@ -607,67 +649,80 @@ public class AllContentFragment extends Fragment {
 
     }
 
+    private String getPosts(JSONObject fetchedData) {
+        String posts = null;
+        try {
+            posts = fetchedData.getString(Constants.posts_posts);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return posts;
+
+
+    }
     private int getViewType(JSONObject fetchedData) {
         int viewtype = 0;
         try {
-            viewtype = fetchedData.getInt("viewtype");
+            viewtype = fetchedData.getInt(Constants.posts_viewtype);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return viewtype;
     }
-    private int getImageId(JSONObject fetchedData) {
+    private String getPost_icon (JSONObject fetchedData) {
 
-        int currentImage = 0;
+        String post_icon = null;
         try {
-            currentImage = fetchedData.getInt("id");
+            post_icon = fetchedData.getString(Constants.posts_post_icon);
+
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return currentImage;
+        return post_icon;
     }
 
-    private String getName(JSONObject fetchedData) {
-        String name = null;
+    private String getTitel(JSONObject fetchedData) {
+        String titel  = null;
         try {
-            name = fetchedData.getString("name");
+            titel = fetchedData.getString(Constants.posts_titel);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return name;
+        return titel;
     }
-    private String getHeadImage(JSONObject fetchedData) {
-        String headImage = null;
+    private String getPost_id(JSONObject fetchedData) {
+        String post_id = null;
         try {
-            headImage = fetchedData.getString("thumbnail");
+            post_id = fetchedData.getString(Constants.posts_post_id);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return headImage;
+        return post_id;
     }
-    private String getHeadTitel(JSONObject fetchedData) {
-        String headImage = null;
+    private String getSubtitle(JSONObject fetchedData) {
+        String subtitle = null;
         try {
-            headImage = fetchedData.getString("headdetail");
+            subtitle = fetchedData.getString(Constants.posts_subtitle);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return headImage;
+        return subtitle;
 
     }
 
 
 
 
-    private String getURL(JSONObject fetchedData) {
-        String url = null;
+    private String getMainimageurl(JSONObject fetchedData) {
+        String mainimageurl = null;
         try {
-            url = fetchedData.getString("url");
+            mainimageurl = fetchedData.getString(Constants.posts_mainimageurl);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return url;
+        return mainimageurl;
     }
     private String getDate(JSONObject fetchedData) {
         String date = null;
@@ -681,10 +736,48 @@ public class AllContentFragment extends Fragment {
     private int getLikes(JSONObject fetchedData) {
         int likes = 0;
         try {
-            likes = fetchedData.getInt("likes");
+            likes = fetchedData.getInt(Constants.posts_likes);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return likes;
+    }
+
+    private int getComments(JSONObject fetchedData) {
+        int comments = 0;
+        try {
+            comments = fetchedData.getInt(Constants.posts_comments);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return comments;
+    }
+    private String getArticlesummary(JSONObject fetchedData) {
+        String articlesummary = null;
+        try {
+            articlesummary = fetchedData.getString(Constants.posts_articlesummary);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return articlesummary;
+    }
+    private String getarticleDescription(JSONObject fetchedData) {
+        String articledescription = null;
+        try {
+            articledescription = fetchedData.getString(Constants.posts_articledescription);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return articledescription;
+    }
+
+    private String getArticleconclution(JSONObject fetchedData) {
+        String articleconclution = null;
+        try {
+            articleconclution = fetchedData.getString(Constants.posts_articleconclution);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return articleconclution;
     }
 }

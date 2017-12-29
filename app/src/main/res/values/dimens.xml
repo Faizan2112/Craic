@@ -29,12 +29,17 @@
     <dimen name="main_card_head_text_size">10sp</dimen>
 <!--padding_sizes -->
     <dimen name="padding_sizes10">10dp</dimen>
-    <dimen name="padding_sizes5">3dp</dimen>
+    <dimen name="padding_sizes20">20dp</dimen>
+    <dimen name="padding_sizes15">15dp</dimen>
+    <dimen name="padding_sizes3">3dp</dimen>
+    <dimen name="padding_sizes5">5dp</dimen>
 
     <!--text_size-->
 
     <dimen name="text_size12">12sp</dimen>
-    <dimen name="text_size14">10sp</dimen>
+    <dimen name="text_size10">10sp</dimen>
+
+    <dimen name="text_size14">14sp</dimen>
     <dimen name="text_size16">16sp</dimen>
     <dimen name="text_size18">18sp</dimen>
     <dimen name="text_size20">20sp</dimen>

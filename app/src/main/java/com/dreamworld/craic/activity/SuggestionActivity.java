@@ -62,8 +62,8 @@ EditText mSugName , mSugDetail ;
                 mTIsugdetail.setError("Fill your suggestion");
 
             }else{
-                int conn3 = NetworkUtill.getConnectivityStatus(getApplicationContext());
-                if(conn3 == NetworkUtill.TYPE_WIFI || conn3 == NetworkUtill.TYPE_MOBILE) {
+               int conn3 = NetworkUtill.getConnectivityStatus(getApplicationContext());
+                 if(conn3 == NetworkUtill.TYPE_WIFI || conn3 == NetworkUtill.TYPE_MOBILE) {
                     sendData();
                 }else
                 {

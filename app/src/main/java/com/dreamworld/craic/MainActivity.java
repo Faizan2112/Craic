@@ -1,3 +1,4 @@
+/*
 package com.dreamworld.craic;
 
 import android.Manifest;
@@ -429,7 +430,8 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                         Intent share = new Intent(Intent.ACTION_SEND);
                         Uri phototUri = Uri.parse("/storage/emulated/0/Download/Craic/image.jpg");
                         share.setData(phototUri);
-                        share.setType("image/*");
+                        share.setType("image*/
+/*");
                         share.putExtra(Intent.EXTRA_TEXT, text);
                         share.putExtra(Intent.EXTRA_STREAM, phototUri);
                         share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -547,10 +549,12 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
 //                    removeImageid.edit().remove(String.valueOf(itemPostion.getImageId())).apply();
 //
 //                }
-                /*Editor editRemoveImageid = removeImageid.edit();
+                */
+/*Editor editRemoveImageid = removeImageid.edit();
                 editRemoveImageid.remove(String.valueOf(itemPostion.getImageId()));
                 editRemoveImageid.apply();
-*/
+*//*
+
 
 
             }
@@ -761,3 +765,4 @@ ImageView countLike = (ImageView)ho.itemView.findViewById(R.id.home_image_like);
         }
     }
 }
+*/

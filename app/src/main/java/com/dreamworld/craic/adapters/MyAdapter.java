@@ -71,7 +71,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
       //  viewHolder.update(i);
 
         View.OnClickListener imageGridTypeListener = new View.OnClickListener() {
-            @Override
+             @Override
             public void onClick(View v) {
                 //    onItemClickListener.onItemClick(object);
 

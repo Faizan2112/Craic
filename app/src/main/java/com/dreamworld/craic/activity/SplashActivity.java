@@ -8,7 +8,7 @@ import android.view.View;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.dreamworld.craic.MainActivity;
+//import com.dreamworld.craic.MainActivity;
 import com.dreamworld.craic.R;
 
 public class SplashActivity extends Activity {

@@ -25,12 +25,12 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public class RegistrationActivity extends AppCompatActivity implements View.OnClickListener {
-    EditText mEmail, mPassword, mCheckPassword;
-    TextInputLayout mTEmail, mTPassword, mTCheckPassword;
+    EditText mEmail, mPassword, mCheckPassword, mFirstName, mLastName;
+    TextInputLayout mTEmail, mTPassword, mTCheckPassword, mTFirstName, mTLastName;
     Button mRegister;
     private String email;
     private String password;
-    private String cpassword;
+    private String cpassword, firstname, lastname;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,98 +46,107 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         mEmail = (EditText) findViewById(R.id.reg_email);
         mPassword = (EditText) findViewById(R.id.reg_pass);
         mCheckPassword = (EditText) findViewById(R.id.reg_con_pass);
+        mFirstName = (EditText) findViewById(R.id.reg_first);
+        mLastName = (EditText) findViewById(R.id.reg_lastname);
         mRegister = (Button) findViewById(R.id.reg_send);
         mTEmail = (TextInputLayout) findViewById(R.id.reg_emailti);
         mTPassword = (TextInputLayout) findViewById(R.id.reg_passti);
         mTCheckPassword = (TextInputLayout) findViewById(R.id.reg_con_passti);
-
-
+        mTFirstName = (TextInputLayout) findViewById(R.id.reg_firstti);
+        mTLastName = (TextInputLayout) findViewById(R.id.reg_lastnameti);
         mRegister.setOnClickListener(this);
 
     }
 
     private boolean validate() {
         Pattern pattern = Patterns.EMAIL_ADDRESS;
-       // return pattern.matcher(email).matches();
+        // return pattern.matcher(email).matches();
 
         boolean isValid = true;
 
-         email = mEmail.getText().toString();
-         password = mPassword.getText().toString();
+        email = mEmail.getText().toString();
+        password = mPassword.getText().toString();
         cpassword = mCheckPassword.getText().toString();
+        firstname = mFirstName.getText().toString();
+        lastname = mLastName.getText().toString();
 
-        if (email.isEmpty() )
-        {
+
+        if (email.isEmpty()) {
             mTEmail.setError("email can't be empty");
             mTEmail.clearFocus();
-            isValid = false ;
-        }else if(!pattern.matcher(email).matches())
-        {
+            isValid = false;
+        } else if (!pattern.matcher(email).matches()) {
             mTEmail.setError("enter valid email ");
             isValid = false;
 
-        }
-        else
-        {
+        } else {
             mTEmail.setError(null);
             mTEmail.clearFocus();
 
         }
 
-        if(password.isEmpty() )
-        {
+        if (password.isEmpty()) {
             mTPassword.setError("password can't be empty");
-            isValid = false ;
+            isValid = false;
 
-        }
-        else
-        {
+        } else {
             mTPassword.setError(null);
             mTPassword.clearFocus();
 
         }
+        if (firstname.isEmpty()) {
+            mTFirstName.setError("Firstname can't be empty");
+            isValid = false;
 
-        if(cpassword.isEmpty() )
-        {
+        } else {
+            mTFirstName.setError(null);
+            mTFirstName.clearFocus();
+
+        }
+        if (lastname.isEmpty()) {
+            mTLastName.setError("lastname can't be empty");
+            isValid = false;
+
+        } else {
+            mTLastName.setError(null);
+            mTLastName.clearFocus();
+
+        }
+
+        if (cpassword.isEmpty()) {
 
             mTCheckPassword.setError(" confirm password can't be empty");
-            isValid = false ;
-        }
-        else
-        {
+            isValid = false;
+        } else {
             mTCheckPassword.setError(null);
             mTCheckPassword.clearFocus();
 
         }
 
-         if(!password.equals(cpassword))
-        {
+        if (!password.equals(cpassword)) {
             mTCheckPassword.setError("password do not match");
-            isValid = false ;
+            isValid = false;
 
-        }  else
-         {
-             mTCheckPassword.setError(null);
-             mTCheckPassword.clearFocus();
+        } else {
+            mTCheckPassword.setError(null);
+            mTCheckPassword.clearFocus();
 
-         }
-
+        }
 
 
-    return isValid ;
+        return isValid;
     }
 
 
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        switch (id)
-        {
+        switch (id) {
             case R.id.reg_send:
 
                 sendData();
 
-               break;
+                break;
 
 
         }
@@ -145,8 +154,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
 
     private void sendData() {
 
-        if(validate())
-        {
+        if (validate()) {
             makeVolleyCall();
 
         }
@@ -157,22 +165,24 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         final StringRequest registerUser = new StringRequest(Request.Method.POST, Config.REGISTER_URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-             Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "" + response, Toast.LENGTH_SHORT).show();
                 gotoLogin(response);
 
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(),""+error.getMessage(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "" + error.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
-        }){
+        }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String> register = new HashMap<>();
-                register.put("email",email);
-                register.put("password",password);
+                Map<String, String> register = new HashMap<>();
+                register.put("email", email);
+                register.put("password", password);
+                register.put("firstname",firstname);
+                register.put("lastname",lastname);
 
                 return register;
             }
@@ -183,13 +193,12 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void gotoLogin(String response) {
-    if(response.equals("success"))
-    {
-        Intent gotoLogin = new Intent(RegistrationActivity.this ,LoginActivity.class);
-        startActivity(gotoLogin);
-        finish();
+        if (response.equals("success")) {
+            Intent gotoLogin = new Intent(RegistrationActivity.this, LoginActivity.class);
+            startActivity(gotoLogin);
+            finish();
 
-    }
+        }
 
     }
 }

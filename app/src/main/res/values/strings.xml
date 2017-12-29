@@ -3,4 +3,18 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="senddata">Send</string>
+
+    <!-- astrik names -->
+    <string name="title">Titel</string>
+
+    <string name="summary">Article Summary<font fgcolor="red">*</font></string>
+    <string name="description">Article Description<font fgcolor="red">*</font></string>
+    <string name="subtitle">Subtitel</string>
+    <string name="conclusion">Conclusion<font fgcolor="red">*</font></string>
+    <string name="reset_pass">Enter your email</string>
+    <string name="favourite">Favorite</string>
+    <string name="post">Posts</string>
+    <string name="edit">Edit Profile</string>
+    <string name="add_comment">Leave a comment</string>
 </resources>
